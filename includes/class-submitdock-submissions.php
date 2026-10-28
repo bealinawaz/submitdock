@@ -2,7 +2,7 @@
 /**
  * Submission storage and the submissions screens.
  *
- * @package Headless_Form
+ * @package SubmitDock
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,15 +10,15 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Stores submissions as a private post type and renders them in the admin.
  */
-final class Headless_Form_Submissions {
+final class SubmitDock_Submissions {
 
-	const POST_TYPE    = 'hdform_submission';
-	const META_FIELDS  = '_hdform_fields';
-	const META_VISITOR = '_hdform_visitor';
-	const META_STATUS  = '_hdform_email_status';
-	const META_FORM    = '_hdform_form';
-	const META_EMAIL   = '_hdform_email';
-	const META_SENT_TO = '_hdform_email_to';
+	const POST_TYPE    = 'submitdock_entry';
+	const META_FIELDS  = '_submitdock_fields';
+	const META_VISITOR = '_submitdock_visitor';
+	const META_STATUS  = '_submitdock_email_status';
+	const META_FORM    = '_submitdock_form';
+	const META_EMAIL   = '_submitdock_email';
+	const META_SENT_TO = '_submitdock_email_to';
 	const EXPORT_BATCH = 500;
 
 	/**
@@ -31,7 +31,7 @@ final class Headless_Form_Submissions {
 		add_action( 'add_meta_boxes_' . self::POST_TYPE, array( __CLASS__, 'add_meta_boxes' ) );
 		add_action( 'restrict_manage_posts', array( __CLASS__, 'render_list_controls' ), 10, 2 );
 		add_action( 'pre_get_posts', array( __CLASS__, 'filter_by_form' ) );
-		add_action( 'admin_post_headless_form_export', array( __CLASS__, 'export_csv' ) );
+		add_action( 'admin_post_submitdock_export', array( __CLASS__, 'export_csv' ) );
 		add_filter( 'post_row_actions', array( __CLASS__, 'row_actions' ), 10, 2 );
 	}
 
@@ -43,15 +43,15 @@ final class Headless_Form_Submissions {
 			self::POST_TYPE,
 			array(
 				'labels'              => array(
-					'name'               => __( 'Form Submissions', 'headless-form' ),
-					'singular_name'      => __( 'Submission', 'headless-form' ),
-					'menu_name'          => __( 'Form Submissions', 'headless-form' ),
-					'all_items'          => __( 'Submissions', 'headless-form' ),
-					'edit_item'          => __( 'Submission', 'headless-form' ),
-					'view_item'          => __( 'View submission', 'headless-form' ),
-					'search_items'       => __( 'Search submissions', 'headless-form' ),
-					'not_found'          => __( 'No submissions yet.', 'headless-form' ),
-					'not_found_in_trash' => __( 'No submissions in the Trash.', 'headless-form' ),
+					'name'               => __( 'Form Submissions', 'submitdock' ),
+					'singular_name'      => __( 'Submission', 'submitdock' ),
+					'menu_name'          => __( 'Form Submissions', 'submitdock' ),
+					'all_items'          => __( 'Submissions', 'submitdock' ),
+					'edit_item'          => __( 'Submission', 'submitdock' ),
+					'view_item'          => __( 'View submission', 'submitdock' ),
+					'search_items'       => __( 'Search submissions', 'submitdock' ),
+					'not_found'          => __( 'No submissions yet.', 'submitdock' ),
+					'not_found_in_trash' => __( 'No submissions in the Trash.', 'submitdock' ),
 				),
 				'public'              => false,
 				'publicly_queryable'  => false,
@@ -111,7 +111,7 @@ final class Headless_Form_Submissions {
 			$sender = $fields['email'];
 		}
 		$parts = array_filter( array( $form, $sender ) );
-		return $parts ? implode( ' — ', $parts ) : __( 'Form submission', 'headless-form' );
+		return $parts ? implode( ' — ', $parts ) : __( 'Form submission', 'submitdock' );
 	}
 
 	/**
@@ -143,7 +143,7 @@ final class Headless_Form_Submissions {
 			return is_string( $json ) ? $json : '';
 		}
 		if ( is_bool( $value ) ) {
-			return $value ? __( 'Yes', 'headless-form' ) : __( 'No', 'headless-form' );
+			return $value ? __( 'Yes', 'submitdock' ) : __( 'No', 'submitdock' );
 		}
 		if ( null === $value ) {
 			return '—';
@@ -169,12 +169,12 @@ final class Headless_Form_Submissions {
 	 */
 	public static function status_label( $status ) {
 		$labels = array(
-			'pending'  => __( 'Pending', 'headless-form' ),
-			'sent'     => __( 'Sent', 'headless-form' ),
-			'failed'   => __( 'Failed, submission saved', 'headless-form' ),
-			'disabled' => __( 'Notifications off', 'headless-form' ),
+			'pending'  => __( 'Pending', 'submitdock' ),
+			'sent'     => __( 'Sent', 'submitdock' ),
+			'failed'   => __( 'Failed, submission saved', 'submitdock' ),
+			'disabled' => __( 'Notifications off', 'submitdock' ),
 		);
-		return $labels[ $status ] ?? __( 'Unknown', 'headless-form' );
+		return $labels[ $status ] ?? __( 'Unknown', 'submitdock' );
 	}
 
 	/**
@@ -191,11 +191,11 @@ final class Headless_Form_Submissions {
 		}
 		if ( 'sent' === $status ) {
 			/* translators: %s: recipient email addresses. */
-			return sprintf( __( 'Sent to %s', 'headless-form' ), $to );
+			return sprintf( __( 'Sent to %s', 'submitdock' ), $to );
 		}
 		if ( 'failed' === $status ) {
 			/* translators: %s: recipient email addresses. */
-			return sprintf( __( 'Failed to send to %s, submission saved', 'headless-form' ), $to );
+			return sprintf( __( 'Failed to send to %s, submission saved', 'submitdock' ), $to );
 		}
 		return self::status_label( $status );
 	}
@@ -220,8 +220,8 @@ final class Headless_Form_Submissions {
 						'<a href="%1$s" aria-label="%2$s">%3$s</a>',
 						esc_url( $link ),
 						/* translators: %s: submission title. */
-						esc_attr( sprintf( __( 'View “%s”', 'headless-form' ), get_the_title( $post ) ) ),
-						esc_html__( 'View', 'headless-form' )
+						esc_attr( sprintf( __( 'View “%s”', 'submitdock' ), get_the_title( $post ) ) ),
+						esc_html__( 'View', 'submitdock' )
 					),
 				),
 				$actions
@@ -239,12 +239,12 @@ final class Headless_Form_Submissions {
 	public static function columns( $columns ) {
 		return array(
 			'cb'           => $columns['cb'],
-			'title'        => __( 'Submission', 'headless-form' ),
-			'hdform_form'     => __( 'Form', 'headless-form' ),
-			'hdform_email'    => __( 'Email', 'headless-form' ),
-			'hdform_origin'   => __( 'Website', 'headless-form' ),
-			'hdform_delivery' => __( 'Notification', 'headless-form' ),
-			'date'         => __( 'Received', 'headless-form' ),
+			'title'        => __( 'Submission', 'submitdock' ),
+			'submitdock_form'     => __( 'Form', 'submitdock' ),
+			'submitdock_email'    => __( 'Email', 'submitdock' ),
+			'submitdock_origin'   => __( 'Website', 'submitdock' ),
+			'submitdock_delivery' => __( 'Notification', 'submitdock' ),
+			'date'         => __( 'Received', 'submitdock' ),
 		);
 	}
 
@@ -255,21 +255,21 @@ final class Headless_Form_Submissions {
 	 * @param int    $post_id Submission ID.
 	 */
 	public static function render_column( $column, $post_id ) {
-		if ( 'hdform_form' === $column ) {
+		if ( 'submitdock_form' === $column ) {
 			$form = (string) get_post_meta( $post_id, self::META_FORM, true );
 			echo esc_html( '' !== $form ? $form : '—' );
-		} elseif ( 'hdform_email' === $column ) {
+		} elseif ( 'submitdock_email' === $column ) {
 			$email = (string) get_post_meta( $post_id, self::META_EMAIL, true );
 			if ( is_email( $email ) ) {
 				printf( '<a href="%1$s">%2$s</a>', esc_url( 'mailto:' . $email ), esc_html( $email ) );
 			} else {
 				echo '—';
 			}
-		} elseif ( 'hdform_origin' === $column ) {
+		} elseif ( 'submitdock_origin' === $column ) {
 			$visitor = get_post_meta( $post_id, self::META_VISITOR, true );
 			$origin  = is_array( $visitor ) && ! empty( $visitor['origin'] ) ? (string) $visitor['origin'] : '';
 			echo esc_html( '' !== $origin ? wp_parse_url( $origin, PHP_URL_HOST ) : '—' );
-		} elseif ( 'hdform_delivery' === $column ) {
+		} elseif ( 'submitdock_delivery' === $column ) {
 			echo esc_html( self::delivery_label( $post_id ) );
 		}
 	}
@@ -288,9 +288,9 @@ final class Headless_Form_Submissions {
 		$forms = self::form_names();
 		if ( $forms ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter.
-			$current = isset( $_GET['hdform_form'] ) ? sanitize_text_field( wp_unslash( $_GET['hdform_form'] ) ) : '';
-			echo '<label class="screen-reader-text" for="hdform-form-filter">' . esc_html__( 'Filter by form', 'headless-form' ) . '</label>';
-			echo '<select name="hdform_form" id="hdform-form-filter"><option value="">' . esc_html__( 'All forms', 'headless-form' ) . '</option>';
+			$current = isset( $_GET['submitdock_form'] ) ? sanitize_text_field( wp_unslash( $_GET['submitdock_form'] ) ) : '';
+			echo '<label class="screen-reader-text" for="submitdock-form-filter">' . esc_html__( 'Filter by form', 'submitdock' ) . '</label>';
+			echo '<select name="submitdock_form" id="submitdock-form-filter"><option value="">' . esc_html__( 'All forms', 'submitdock' ) . '</option>';
 			foreach ( $forms as $form ) {
 				printf( '<option value="%1$s"%2$s>%3$s</option>', esc_attr( $form ), selected( $current, $form, false ), esc_html( $form ) );
 			}
@@ -298,8 +298,8 @@ final class Headless_Form_Submissions {
 		}
 
 		if ( current_user_can( 'read_private_posts' ) ) {
-			$url = wp_nonce_url( admin_url( 'admin-post.php?action=headless_form_export' ), 'headless_form_export' );
-			printf( '<a class="button" href="%1$s">%2$s</a>', esc_url( $url ), esc_html__( 'Export CSV', 'headless-form' ) );
+			$url = wp_nonce_url( admin_url( 'admin-post.php?action=submitdock_export' ), 'submitdock_export' );
+			printf( '<a class="button" href="%1$s">%2$s</a>', esc_url( $url ), esc_html__( 'Export CSV', 'submitdock' ) );
 		}
 	}
 
@@ -322,7 +322,7 @@ final class Headless_Form_Submissions {
 	 */
 	public static function filter_by_form( $query ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter.
-		if ( ! is_admin() || ! $query->is_main_query() || self::POST_TYPE !== $query->get( 'post_type' ) || empty( $_GET['hdform_form'] ) ) {
+		if ( ! is_admin() || ! $query->is_main_query() || self::POST_TYPE !== $query->get( 'post_type' ) || empty( $_GET['submitdock_form'] ) ) {
 			return;
 		}
 		$query->set(
@@ -331,7 +331,7 @@ final class Headless_Form_Submissions {
 				array(
 					'key'   => self::META_FORM,
 					// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list filter.
-					'value' => sanitize_text_field( wp_unslash( $_GET['hdform_form'] ) ),
+					'value' => sanitize_text_field( wp_unslash( $_GET['submitdock_form'] ) ),
 				),
 			)
 		);
@@ -341,8 +341,8 @@ final class Headless_Form_Submissions {
 	 * Adds the submission and visitor boxes.
 	 */
 	public static function add_meta_boxes() {
-		add_meta_box( 'hdform-fields', __( 'Submitted fields', 'headless-form' ), array( __CLASS__, 'render_fields_box' ), self::POST_TYPE, 'normal', 'high' );
-		add_meta_box( 'hdform-visitor', __( 'Visitor details', 'headless-form' ), array( __CLASS__, 'render_visitor_box' ), self::POST_TYPE, 'normal' );
+		add_meta_box( 'submitdock-fields', __( 'Submitted fields', 'submitdock' ), array( __CLASS__, 'render_fields_box' ), self::POST_TYPE, 'normal', 'high' );
+		add_meta_box( 'submitdock-visitor', __( 'Visitor details', 'submitdock' ), array( __CLASS__, 'render_visitor_box' ), self::POST_TYPE, 'normal' );
 	}
 
 	/**
@@ -354,12 +354,12 @@ final class Headless_Form_Submissions {
 		$fields = get_post_meta( $post->ID, self::META_FIELDS, true );
 		$form   = (string) get_post_meta( $post->ID, self::META_FORM, true );
 		if ( ! is_array( $fields ) ) {
-			echo '<p>' . esc_html__( 'No fields were saved.', 'headless-form' ) . '</p>';
+			echo '<p>' . esc_html__( 'No fields were saved.', 'submitdock' ) . '</p>';
 			return;
 		}
 		if ( '' !== $form ) {
 			/* translators: %s: form identifier. */
-			echo '<p>' . esc_html( sprintf( __( 'Form: %s', 'headless-form' ), $form ) ) . '</p>';
+			echo '<p>' . esc_html( sprintf( __( 'Form: %s', 'submitdock' ), $form ) ) . '</p>';
 		}
 		echo '<table class="widefat striped"><tbody>';
 		foreach ( $fields as $key => $value ) {
@@ -388,7 +388,7 @@ final class Headless_Form_Submissions {
 			$label = $labels[ $key ] ?? self::label_for( $key );
 			echo '<tr><th scope="row">' . esc_html( $label ) . '</th><td>' . esc_html( self::format_value( $value ) ) . '</td></tr>';
 		}
-		echo '<tr><th scope="row">' . esc_html__( 'Email notification', 'headless-form' ) . '</th><td>' . esc_html( self::delivery_label( $post->ID ) ) . '</td></tr>';
+		echo '<tr><th scope="row">' . esc_html__( 'Email notification', 'submitdock' ) . '</th><td>' . esc_html( self::delivery_label( $post->ID ) ) . '</td></tr>';
 		echo '</tbody></table>';
 	}
 
@@ -399,17 +399,17 @@ final class Headless_Form_Submissions {
 	 */
 	public static function visitor_labels() {
 		return array(
-			'page_url'   => __( 'Page URL', 'headless-form' ),
-			'referrer'   => __( 'Referrer', 'headless-form' ),
-			'origin'     => __( 'Website', 'headless-form' ),
-			'ip_address' => __( 'IP address', 'headless-form' ),
-			'browser'    => __( 'Browser', 'headless-form' ),
-			'os'         => __( 'Operating system', 'headless-form' ),
-			'device'     => __( 'Device', 'headless-form' ),
-			'user_agent' => __( 'User agent', 'headless-form' ),
-			'city'       => __( 'City', 'headless-form' ),
-			'region'     => __( 'Region', 'headless-form' ),
-			'country'    => __( 'Country', 'headless-form' ),
+			'page_url'   => __( 'Page URL', 'submitdock' ),
+			'referrer'   => __( 'Referrer', 'submitdock' ),
+			'origin'     => __( 'Website', 'submitdock' ),
+			'ip_address' => __( 'IP address', 'submitdock' ),
+			'browser'    => __( 'Browser', 'submitdock' ),
+			'os'         => __( 'Operating system', 'submitdock' ),
+			'device'     => __( 'Device', 'submitdock' ),
+			'user_agent' => __( 'User agent', 'submitdock' ),
+			'city'       => __( 'City', 'submitdock' ),
+			'region'     => __( 'Region', 'submitdock' ),
+			'country'    => __( 'Country', 'submitdock' ),
 		);
 	}
 
@@ -418,9 +418,9 @@ final class Headless_Form_Submissions {
 	 */
 	public static function export_csv() {
 		if ( ! current_user_can( 'read_private_posts' ) ) {
-			wp_die( esc_html__( 'You are not allowed to export submissions.', 'headless-form' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'You are not allowed to export submissions.', 'submitdock' ), '', array( 'response' => 403 ) );
 		}
-		check_admin_referer( 'headless_form_export' );
+		check_admin_referer( 'submitdock_export' );
 
 		// First pass: collect every field and visitor key so each gets a column.
 		$field_keys   = array();
@@ -444,7 +444,7 @@ final class Headless_Form_Submissions {
 		fwrite( $output, "\xEF\xBB\xBF" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- UTF-8 BOM for spreadsheet apps.
 		$labels = self::visitor_labels();
 		$header = array_merge(
-			array( 'ID', __( 'Received (UTC)', 'headless-form' ), __( 'Form', 'headless-form' ), __( 'Notification', 'headless-form' ) ),
+			array( 'ID', __( 'Received (UTC)', 'submitdock' ), __( 'Form', 'submitdock' ), __( 'Notification', 'submitdock' ) ),
 			$field_keys,
 			array_map(
 				static function ( $key ) use ( $labels ) {

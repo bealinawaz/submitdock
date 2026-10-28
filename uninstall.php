@@ -1,25 +1,25 @@
 <?php
 /**
  * Removes the settings. Submissions are kept unless the
- * HEADLESS_FORM_DELETE_DATA constant is true, so uninstalling never loses messages by accident.
+ * SUBMITDOCK_DELETE_DATA constant is true, so uninstalling never loses messages by accident.
  *
- * @package Headless_Form
+ * @package SubmitDock
  */
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-delete_option( 'headless_form_settings' );
+delete_option( 'submitdock_settings' );
 
-if ( defined( 'HEADLESS_FORM_DELETE_DATA' ) && HEADLESS_FORM_DELETE_DATA ) {
-	$headless_form_ids = get_posts(
+if ( defined( 'SUBMITDOCK_DELETE_DATA' ) && SUBMITDOCK_DELETE_DATA ) {
+	$submitdock_ids = get_posts(
 		array(
-			'post_type'      => 'hdform_submission',
+			'post_type'      => 'submitdock_entry',
 			'post_status'    => 'any',
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
 		)
 	);
-	foreach ( $headless_form_ids as $headless_form_id ) {
-		wp_delete_post( $headless_form_id, true );
+	foreach ( $submitdock_ids as $submitdock_id ) {
+		wp_delete_post( $submitdock_id, true );
 	}
 }

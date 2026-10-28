@@ -2,7 +2,7 @@
 /**
  * Plugin settings.
  *
- * @package Headless_Form
+ * @package SubmitDock
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,10 +10,10 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Reads and validates the plugin settings.
  */
-final class Headless_Form_Settings {
+final class SubmitDock_Settings {
 
-	const OPTION = 'headless_form_settings';
-	const GROUP  = 'headless_form';
+	const OPTION = 'submitdock_settings';
+	const GROUP  = 'submitdock';
 
 	/**
 	 * Response messages shown to visitors, keyed by setting name.
@@ -22,13 +22,13 @@ final class Headless_Form_Settings {
 	 */
 	public static function message_labels() {
 		return array(
-			'success_message'        => __( 'Success', 'headless-form' ),
-			'mail_failed_message'    => __( 'Saved, but the email failed', 'headless-form' ),
-			'invalid_message'        => __( 'Invalid submission', 'headless-form' ),
-			'origin_message'         => __( 'Website not allowed', 'headless-form' ),
-			'rate_limit_message'     => __( 'Too many submissions', 'headless-form' ),
-			'storage_failed_message' => __( 'Could not save', 'headless-form' ),
-			'spam_message'           => __( 'Spam rejected', 'headless-form' ),
+			'success_message'        => __( 'Success', 'submitdock' ),
+			'mail_failed_message'    => __( 'Saved, but the email failed', 'submitdock' ),
+			'invalid_message'        => __( 'Invalid submission', 'submitdock' ),
+			'origin_message'         => __( 'Website not allowed', 'submitdock' ),
+			'rate_limit_message'     => __( 'Too many submissions', 'submitdock' ),
+			'storage_failed_message' => __( 'Could not save', 'submitdock' ),
+			'spam_message'           => __( 'Spam rejected', 'submitdock' ),
 		);
 	}
 
@@ -42,7 +42,7 @@ final class Headless_Form_Settings {
 			'recipient'              => (string) get_option( 'admin_email' ),
 			'email_notifications'    => true,
 			/* translators: %s: site name. */
-			'email_subject'          => sprintf( __( 'New form submission on %s', 'headless-form' ), wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ),
+			'email_subject'          => sprintf( __( 'New form submission on %s', 'submitdock' ), wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ),
 			'reply_to_field'         => 'email',
 			'honeypot_field'         => '_gotcha',
 			'allowed_origins'        => array(),
@@ -50,13 +50,13 @@ final class Headless_Form_Settings {
 			'rate_window_minutes'    => 15,
 			'store_ip'               => true,
 			'location_lookup'        => false,
-			'success_message'        => __( 'Thank you. Your message has been received.', 'headless-form' ),
-			'mail_failed_message'    => __( 'Your message was saved, but the email notification could not be sent.', 'headless-form' ),
-			'invalid_message'        => __( 'Your submission contains invalid or unsupported data.', 'headless-form' ),
-			'origin_message'         => __( 'This website is not allowed to submit this form.', 'headless-form' ),
-			'rate_limit_message'     => __( 'Too many submissions from this connection. Please wait and try again.', 'headless-form' ),
-			'storage_failed_message' => __( 'Your message could not be saved. Please try again later.', 'headless-form' ),
-			'spam_message'           => __( 'Your submission could not be accepted.', 'headless-form' ),
+			'success_message'        => __( 'Thank you. Your message has been received.', 'submitdock' ),
+			'mail_failed_message'    => __( 'Your message was saved, but the email notification could not be sent.', 'submitdock' ),
+			'invalid_message'        => __( 'Your submission contains invalid or unsupported data.', 'submitdock' ),
+			'origin_message'         => __( 'This website is not allowed to submit this form.', 'submitdock' ),
+			'rate_limit_message'     => __( 'Too many submissions from this connection. Please wait and try again.', 'submitdock' ),
+			'storage_failed_message' => __( 'Your message could not be saved. Please try again later.', 'submitdock' ),
+			'spam_message'           => __( 'Your submission could not be accepted.', 'submitdock' ),
 		);
 	}
 
@@ -87,7 +87,7 @@ final class Headless_Form_Settings {
 		if ( is_email( $recipient ) ) {
 			$output['recipient'] = $recipient;
 		} else {
-			self::error( 'recipient', __( 'Enter a valid notification email address.', 'headless-form' ) );
+			self::error( 'recipient', __( 'Enter a valid notification email address.', 'submitdock' ) );
 		}
 
 		$output['email_notifications'] = ! empty( $input['email_notifications'] );
@@ -98,21 +98,21 @@ final class Headless_Form_Settings {
 		if ( '' !== $subject ) {
 			$output['email_subject'] = $subject;
 		} else {
-			self::error( 'subject', __( 'The email subject cannot be empty.', 'headless-form' ) );
+			self::error( 'subject', __( 'The email subject cannot be empty.', 'submitdock' ) );
 		}
 
 		$reply_to = isset( $input['reply_to_field'] ) ? trim( (string) $input['reply_to_field'] ) : '';
 		if ( '' === $reply_to || self::is_field_key( $reply_to ) ) {
 			$output['reply_to_field'] = $reply_to;
 		} else {
-			self::error( 'reply_to', __( 'Field names can contain only letters, numbers, underscores, periods, and hyphens.', 'headless-form' ) );
+			self::error( 'reply_to', __( 'Field names can contain only letters, numbers, underscores, periods, and hyphens.', 'submitdock' ) );
 		}
 
 		$honeypot = isset( $input['honeypot_field'] ) ? trim( (string) $input['honeypot_field'] ) : '';
 		if ( '' === $honeypot || self::is_field_key( $honeypot ) ) {
 			$output['honeypot_field'] = $honeypot;
 		} else {
-			self::error( 'honeypot', __( 'Field names can contain only letters, numbers, underscores, periods, and hyphens.', 'headless-form' ) );
+			self::error( 'honeypot', __( 'Field names can contain only letters, numbers, underscores, periods, and hyphens.', 'submitdock' ) );
 		}
 
 		$lines   = isset( $input['allowed_origins'] ) ? preg_split( '/\r\n|\r|\n/', (string) $input['allowed_origins'] ) : array();
@@ -125,7 +125,7 @@ final class Headless_Form_Settings {
 			$origin = self::normalize_origin( $line );
 			if ( false === $origin ) {
 				/* translators: %s: the rejected origin. */
-				self::error( 'origin_' . md5( $line ), sprintf( __( '"%s" is not a valid origin and was ignored. Enter only a scheme and host, for example https://example.com.', 'headless-form' ), $line ) );
+				self::error( 'origin_' . md5( $line ), sprintf( __( '"%s" is not a valid origin and was ignored. Enter only a scheme and host, for example https://example.com.', 'submitdock' ), $line ) );
 				continue;
 			}
 			$origins[] = $origin;
@@ -140,7 +140,7 @@ final class Headless_Form_Settings {
 			if ( '' !== $message && mb_strlen( $message ) <= 500 ) {
 				$output[ $key ] = $message;
 			} else {
-				self::error( $key, __( 'Response messages must be between 1 and 500 characters.', 'headless-form' ) );
+				self::error( $key, __( 'Response messages must be between 1 and 500 characters.', 'submitdock' ) );
 			}
 		}
 
@@ -196,7 +196,7 @@ final class Headless_Form_Settings {
 		$integer = filter_var( $value, FILTER_VALIDATE_INT );
 		if ( false === $integer || $integer < $min || $integer > $max ) {
 			/* translators: 1: minimum, 2: maximum. */
-			self::error( 'range_' . $min . '_' . $max, sprintf( __( 'Rate limit values must be between %1$d and %2$d.', 'headless-form' ), $min, $max ) );
+			self::error( 'range_' . $min . '_' . $max, sprintf( __( 'Rate limit values must be between %1$d and %2$d.', 'submitdock' ), $min, $max ) );
 			return (int) $fallback;
 		}
 		return $integer;

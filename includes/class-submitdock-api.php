@@ -2,7 +2,7 @@
 /**
  * REST API endpoint that receives submissions.
  *
- * @package Headless_Form
+ * @package SubmitDock
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,9 +10,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Registers the submit endpoint, validates requests, and sends notifications.
  */
-final class Headless_Form_API {
+final class SubmitDock_API {
 
-	const NAMESPACE  = 'headless-form/v1';
+	const NAMESPACE  = 'submitdock/v1';
 	const MAX_FIELDS = 50;
 	const MAX_BYTES  = 20000;
 	const MAX_TEXT   = 5000;
@@ -70,7 +70,7 @@ final class Headless_Form_API {
 		if ( ! self::is_own_request() ) {
 			return $origins;
 		}
-		$allowed = Headless_Form_Settings::get()['allowed_origins'];
+		$allowed = SubmitDock_Settings::get()['allowed_origins'];
 		if ( ! $allowed ) {
 			$request_origin = get_http_origin();
 			$allowed        = $request_origin ? array( $request_origin ) : array();
@@ -84,15 +84,15 @@ final class Headless_Form_API {
 	 * @return true|WP_Error
 	 */
 	public static function check_origin() {
-		$settings = Headless_Form_Settings::get();
+		$settings = SubmitDock_Settings::get();
 		if ( ! $settings['allowed_origins'] ) {
 			return true;
 		}
 		$origin = get_http_origin();
-		if ( $origin && in_array( Headless_Form_Settings::normalize_origin( $origin ), $settings['allowed_origins'], true ) ) {
+		if ( $origin && in_array( SubmitDock_Settings::normalize_origin( $origin ), $settings['allowed_origins'], true ) ) {
 			return true;
 		}
-		return new WP_Error( 'headless_form_origin', $settings['origin_message'], array( 'status' => 403 ) );
+		return new WP_Error( 'submitdock_origin', $settings['origin_message'], array( 'status' => 403 ) );
 	}
 
 	/**
@@ -102,7 +102,7 @@ final class Headless_Form_API {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function submit( WP_REST_Request $request ) {
-		$settings = Headless_Form_Settings::get();
+		$settings = SubmitDock_Settings::get();
 		$is_json  = null !== $request->get_json_params();
 		$payload  = $is_json ? $request->get_json_params() : $request->get_body_params();
 
@@ -144,7 +144,7 @@ final class Headless_Form_API {
 		 * @param array|WP_Error  $fields  Sanitized fields.
 		 * @param WP_REST_Request $request Request.
 		 */
-		$fields = apply_filters( 'headless_form_fields', $fields, $request );
+		$fields = apply_filters( 'submitdock_fields', $fields, $request );
 		if ( is_wp_error( $fields ) ) {
 			return self::respond( $fields, $is_json, $payload );
 		}
@@ -157,7 +157,7 @@ final class Headless_Form_API {
 			$email = sanitize_email( $fields[ $reply ] );
 		}
 
-		$post_id = Headless_Form_Submissions::create( $fields, $visitor, $form, $email );
+		$post_id = SubmitDock_Submissions::create( $fields, $visitor, $form, $email );
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
 			return self::respond( self::error( 'storage', $settings['storage_failed_message'], 500 ), $is_json, $payload );
 		}
@@ -166,9 +166,9 @@ final class Headless_Form_API {
 		if ( $settings['email_notifications'] ) {
 			$sent_to = self::notify( $settings, $fields, $form, $email, $visitor );
 			$status  = $sent_to['sent'] ? 'sent' : 'failed';
-			update_post_meta( $post_id, Headless_Form_Submissions::META_SENT_TO, $sent_to['to'] );
+			update_post_meta( $post_id, SubmitDock_Submissions::META_SENT_TO, $sent_to['to'] );
 		}
-		update_post_meta( $post_id, Headless_Form_Submissions::META_STATUS, $status );
+		update_post_meta( $post_id, SubmitDock_Submissions::META_STATUS, $status );
 
 		/**
 		 * Fires after a submission is saved and the notification is handled.
@@ -178,7 +178,7 @@ final class Headless_Form_API {
 		 * @param string $form    Form identifier, or an empty string.
 		 * @param array  $visitor Visitor details.
 		 */
-		do_action( 'headless_form_submission_saved', $post_id, $fields, $form, $visitor );
+		do_action( 'submitdock_submission_saved', $post_id, $fields, $form, $visitor );
 
 		$failed   = 'failed' === $status;
 		$response = new WP_REST_Response(
@@ -228,8 +228,8 @@ final class Headless_Form_API {
 			return '';
 		}
 		$origin  = strtolower( $scheme . '://' . $host ) . ( $port ? ':' . $port : '' );
-		$allowed = Headless_Form_Settings::get()['allowed_origins'];
-		$allowed = array_merge( $allowed, array( Headless_Form_Settings::normalize_origin( home_url( '/' ) ) ) );
+		$allowed = SubmitDock_Settings::get()['allowed_origins'];
+		$allowed = array_merge( $allowed, array( SubmitDock_Settings::normalize_origin( home_url( '/' ) ) ) );
 		return in_array( $origin, $allowed, true ) ? $url : '';
 	}
 
@@ -240,7 +240,7 @@ final class Headless_Form_API {
 	 * @return true|WP_Error
 	 */
 	private static function check_rate_limit( array $settings ) {
-		$key   = 'hdform_rate_' . hash_hmac( 'sha256', self::client_ip(), wp_salt( 'nonce' ) );
+		$key   = 'submitdock_rate_' . hash_hmac( 'sha256', self::client_ip(), wp_salt( 'nonce' ) );
 		$count = (int) get_transient( $key );
 		if ( $count >= $settings['rate_limit'] ) {
 			return self::error( 'rate_limited', $settings['rate_limit_message'], 429 );
@@ -262,7 +262,7 @@ final class Headless_Form_API {
 		 *
 		 * @param string $ip IP address from REMOTE_ADDR.
 		 */
-		$ip = (string) apply_filters( 'headless_form_client_ip', $ip );
+		$ip = (string) apply_filters( 'submitdock_client_ip', $ip );
 		return filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '';
 	}
 
@@ -437,9 +437,9 @@ final class Headless_Form_API {
 			return '';
 		}
 		if ( preg_match( '/iPad|Tablet|PlayBook|Silk/i', $agent ) || ( preg_match( '/Android/i', $agent ) && ! preg_match( '/Mobile/i', $agent ) ) ) {
-			return __( 'Tablet', 'headless-form' );
+			return __( 'Tablet', 'submitdock' );
 		}
-		return preg_match( '/Mobile|iPhone|iPod|Android/i', $agent ) ? __( 'Mobile', 'headless-form' ) : __( 'Desktop', 'headless-form' );
+		return preg_match( '/Mobile|iPhone|iPod|Android/i', $agent ) ? __( 'Mobile', 'submitdock' ) : __( 'Desktop', 'submitdock' );
 	}
 
 	/**
@@ -486,18 +486,18 @@ final class Headless_Form_API {
 	private static function notify( array $settings, array $fields, $form, $email, array $visitor ) {
 		$lines = array();
 		foreach ( $fields as $key => $value ) {
-			$lines[] = Headless_Form_Submissions::label_for( $key ) . ': ' . Headless_Form_Submissions::format_value( $value );
+			$lines[] = SubmitDock_Submissions::label_for( $key ) . ': ' . SubmitDock_Submissions::format_value( $value );
 			$lines[] = '';
 		}
 		if ( ! empty( $visitor['page_url'] ) ) {
 			/* translators: %s: page URL. */
-			$lines[] = sprintf( __( 'Sent from: %s', 'headless-form' ), $visitor['page_url'] );
+			$lines[] = sprintf( __( 'Sent from: %s', 'submitdock' ), $visitor['page_url'] );
 		}
 
 		$subject = '' !== $form ? '[' . $form . '] ' . $settings['email_subject'] : $settings['email_subject'];
 		$headers = array( 'Content-Type: text/plain; charset=UTF-8' );
 		if ( '' !== $email ) {
-			$name      = Headless_Form_Submissions::sender_name( $fields );
+			$name      = SubmitDock_Submissions::sender_name( $fields );
 			$name      = str_replace( array( '"', "\r", "\n" ), '', $name );
 			$headers[] = 'Reply-To: ' . ( '' !== $name ? '"' . $name . '" <' . $email . '>' : $email );
 		}
@@ -510,7 +510,7 @@ final class Headless_Form_API {
 		 * @param string $form  Form identifier.
 		 */
 		$mail = apply_filters(
-			'headless_form_email',
+			'submitdock_email',
 			array(
 				'to'      => $settings['recipient'],
 				'subject' => $subject,
@@ -535,6 +535,6 @@ final class Headless_Form_API {
 	 * @return WP_Error
 	 */
 	private static function error( $code, $message, $status ) {
-		return new WP_Error( 'headless_form_' . $code, $message, array( 'status' => $status ) );
+		return new WP_Error( 'submitdock_' . $code, $message, array( 'status' => $status ) );
 	}
 }

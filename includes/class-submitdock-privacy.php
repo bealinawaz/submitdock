@@ -2,7 +2,7 @@
 /**
  * Privacy policy text and personal data export and erasure.
  *
- * @package Headless_Form
+ * @package SubmitDock
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Connects submissions to the WordPress privacy tools.
  */
-final class Headless_Form_Privacy {
+final class SubmitDock_Privacy {
 
 	const PAGE_SIZE = 50;
 
@@ -30,8 +30,8 @@ final class Headless_Form_Privacy {
 		if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
 			return;
 		}
-		$text = '<p>' . esc_html__( 'When you submit a form on this website, the information you enter is stored on this site and emailed to the site owner. Depending on the settings, the submission also stores the page you submitted it from, your browser and device type, your IP address, and an approximate location based on that IP address, looked up through the ipwho.is service.', 'headless-form' ) . '</p>';
-		wp_add_privacy_policy_content( __( 'Headless Form', 'headless-form' ), $text );
+		$text = '<p>' . esc_html__( 'When you submit a form on this website, the information you enter is stored on this site and emailed to the site owner. Depending on the settings, the submission also stores the page you submitted it from, your browser and device type, your IP address, and an approximate location based on that IP address, looked up through the ipwho.is service.', 'submitdock' ) . '</p>';
+		wp_add_privacy_policy_content( __( 'SubmitDock', 'submitdock' ), $text );
 	}
 
 	/**
@@ -41,8 +41,8 @@ final class Headless_Form_Privacy {
 	 * @return array
 	 */
 	public static function register_exporter( $exporters ) {
-		$exporters['headless-form'] = array(
-			'exporter_friendly_name' => __( 'Form submissions', 'headless-form' ),
+		$exporters['submitdock'] = array(
+			'exporter_friendly_name' => __( 'Form submissions', 'submitdock' ),
 			'callback'               => array( __CLASS__, 'export' ),
 		);
 		return $exporters;
@@ -55,8 +55,8 @@ final class Headless_Form_Privacy {
 	 * @return array
 	 */
 	public static function register_eraser( $erasers ) {
-		$erasers['headless-form'] = array(
-			'eraser_friendly_name' => __( 'Form submissions', 'headless-form' ),
+		$erasers['submitdock'] = array(
+			'eraser_friendly_name' => __( 'Form submissions', 'submitdock' ),
 			'callback'             => array( __CLASS__, 'erase' ),
 		);
 		return $erasers;
@@ -72,13 +72,13 @@ final class Headless_Form_Privacy {
 	private static function find( $email, $page ) {
 		return get_posts(
 			array(
-				'post_type'      => Headless_Form_Submissions::POST_TYPE,
+				'post_type'      => SubmitDock_Submissions::POST_TYPE,
 				'post_status'    => 'any',
 				'posts_per_page' => self::PAGE_SIZE,
 				'paged'          => $page,
 				'fields'         => 'ids',
 				'orderby'        => 'ID',
-				'meta_key'       => Headless_Form_Submissions::META_EMAIL, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_key'       => SubmitDock_Submissions::META_EMAIL, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				'meta_value'     => strtolower( $email ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			)
 		);
@@ -97,27 +97,27 @@ final class Headless_Form_Privacy {
 		foreach ( $ids as $id ) {
 			$data = array(
 				array(
-					'name'  => __( 'Received', 'headless-form' ),
+					'name'  => __( 'Received', 'submitdock' ),
 					'value' => get_post_time( 'Y-m-d H:i:s', true, $id ) . ' UTC',
 				),
 			);
-			foreach ( (array) get_post_meta( $id, Headless_Form_Submissions::META_FIELDS, true ) as $key => $value ) {
+			foreach ( (array) get_post_meta( $id, SubmitDock_Submissions::META_FIELDS, true ) as $key => $value ) {
 				$data[] = array(
-					'name'  => Headless_Form_Submissions::label_for( $key ),
-					'value' => Headless_Form_Submissions::format_value( $value ),
+					'name'  => SubmitDock_Submissions::label_for( $key ),
+					'value' => SubmitDock_Submissions::format_value( $value ),
 				);
 			}
-			$labels = Headless_Form_Submissions::visitor_labels();
-			foreach ( (array) get_post_meta( $id, Headless_Form_Submissions::META_VISITOR, true ) as $key => $value ) {
+			$labels = SubmitDock_Submissions::visitor_labels();
+			foreach ( (array) get_post_meta( $id, SubmitDock_Submissions::META_VISITOR, true ) as $key => $value ) {
 				$data[] = array(
-					'name'  => $labels[ $key ] ?? Headless_Form_Submissions::label_for( $key ),
-					'value' => Headless_Form_Submissions::format_value( $value ),
+					'name'  => $labels[ $key ] ?? SubmitDock_Submissions::label_for( $key ),
+					'value' => SubmitDock_Submissions::format_value( $value ),
 				);
 			}
 			$items[] = array(
-				'group_id'    => 'headless-form',
-				'group_label' => __( 'Form submissions', 'headless-form' ),
-				'item_id'     => 'hdform-submission-' . $id,
+				'group_id'    => 'submitdock',
+				'group_label' => __( 'Form submissions', 'submitdock' ),
+				'item_id'     => 'submitdock-submission-' . $id,
 				'data'        => $data,
 			);
 		}

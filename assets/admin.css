@@ -1,12 +1,12 @@
-.hdform-guide__table {
+.submitdock-guide__table {
 	max-width: 960px;
 }
 
-.hdform-guide__table th {
+.submitdock-guide__table th {
 	width: 140px;
 }
 
-.hdform-code {
+.submitdock-code {
 	max-width: 960px;
 	margin: 12px 0 20px;
 	border: 1px solid #3c434a;
@@ -15,7 +15,7 @@
 	overflow: hidden;
 }
 
-.hdform-code__bar {
+.submitdock-code__bar {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -26,7 +26,7 @@
 	font-weight: 600;
 }
 
-.hdform-code pre {
+.submitdock-code pre {
 	margin: 0;
 	padding: 14px;
 	max-height: 480px;
@@ -35,14 +35,14 @@
 	font: 13px/1.6 Consolas, Monaco, monospace;
 }
 
-.hdform-code code {
+.submitdock-code code {
 	padding: 0;
 	background: transparent;
 	color: inherit;
 	font: inherit;
 }
 
-.hdform-support {
+.submitdock-support {
 	max-width: 960px;
 	margin: 32px 0 0;
 	padding: 4px 20px 12px;
@@ -51,7 +51,7 @@
 	border-left: 4px solid #2271b1;
 }
 
-.hdform-support__actions {
+.submitdock-support__actions {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;

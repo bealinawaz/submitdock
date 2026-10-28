@@ -1,11 +1,11 @@
-=== Headless Form – Self-Hosted Form Backend via REST API ===
+=== SubmitDock – Headless Form Backend via REST API ===
 Contributors: imalinawaz
 Donate link: https://www.buymeacoffee.com/bealinawaz
 Tags: headless, form backend, contact form, rest api, form submissions
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Receive form submissions from any website or app through a REST API endpoint. Wo
 
 == Description ==
 
-Headless Form turns your WordPress site into a form backend. Point any form at your endpoint, from a static site, a headless WordPress front end, a React, Next.js, Vue, or Astro app, a mobile app, or a server, and every submission is saved in WordPress and emailed to you.
+SubmitDock turns your WordPress site into a form backend. Point any form at your endpoint, from a static site, a headless WordPress front end, a React, Next.js, Vue, or Astro app, a mobile app, or a server, and every submission is saved in WordPress and emailed to you.
 
 There is no form builder to set up. You build the form however you like, and the plugin accepts whatever fields it sends. It works like a hosted form backend service, but your submissions stay on your own WordPress site, with no monthly fee or submission limit.
 
@@ -31,7 +31,7 @@ There is no form builder to set up. You build the form however you like, and the
 
 **How it works**
 
-1. Install the plugin. Your endpoint is `https://your-site.com/wp-json/headless-form/v1/submit`.
+1. Install the plugin. Your endpoint is `https://your-site.com/wp-json/submitdock/v1/submit`.
 2. Under **Form Submissions → Settings**, add the websites allowed to send forms.
 3. Send your form to the endpoint. **Form Submissions → Developer guide** has copy-ready JavaScript, HTML, and cURL examples using your own URL.
 
@@ -39,7 +39,7 @@ Responses are JSON with a `message` ready to show your visitors. Status 200 mean
 
 **Custom development**
 
-Need a webhook to your CRM, file uploads, a multi-step form, or a full headless WordPress build? The plugin is built and maintained by Ali Nawaz, a WordPress and full stack developer. [Get in touch for custom work](https://bealinawaz.com/contact-me/?utm_source=wordpress.org&utm_medium=plugin-readme&utm_campaign=headless-form).
+Need a webhook to your CRM, file uploads, a multi-step form, or a full headless WordPress build? The plugin is built and maintained by Ali Nawaz, a WordPress and full stack developer. [Get in touch for custom work](https://bealinawaz.com/contact-me/?utm_source=wordpress.org&utm_medium=plugin-readme&utm_campaign=submitdock).
 
 == External services ==
 
@@ -47,7 +47,7 @@ This plugin can connect to one external service, and only if you turn it on.
 
 **ipwho.is IP geolocation** (`https://ipwho.is/`)
 When "Look up the approximate city and country" is enabled under Form Submissions → Settings (it is off by default), the visitor's IP address is sent to ipwho.is when they submit a form, and the returned city, region, and country are saved with the submission.
-Terms and privacy policy: https://ipwho.is/
+The service is run by ipwhois.io. Terms of use: https://ipwhois.io/terms. Privacy policy: https://ipwhois.io/privacy.
 
 Email notifications are sent through your site's own WordPress mail setup.
 
@@ -86,13 +86,16 @@ Not in this version. Text, numbers, true/false values, lists, and nested objects
 
 = My site is behind Cloudflare or a proxy. Which IP is saved? =
 
-The connecting IP address. Use the `headless_form_client_ip` filter to read the visitor's address from the header your proxy provides.
+The connecting IP address. Use the `submitdock_client_ip` filter to read the visitor's address from the header your proxy provides.
 
 = Are submissions deleted when I uninstall? =
 
-No, only the settings are removed, so messages are never lost by accident. To delete submissions too, define `HEADLESS_FORM_DELETE_DATA` as true in wp-config.php before uninstalling.
+No, only the settings are removed, so messages are never lost by accident. To delete submissions too, define `SUBMITDOCK_DELETE_DATA` as true in wp-config.php before uninstalling.
 
 == Changelog ==
+
+= 1.1.0 =
+* Renamed from Headless Form to SubmitDock. The endpoint is now `/wp-json/submitdock/v1/submit`, and settings and submissions are stored under new names. A site already running Headless Form keeps its data in the old plugin.
 
 = 1.0.1 =
 * New: a View link for each submission in the list.
@@ -103,6 +106,9 @@ No, only the settings are removed, so messages are never lost by accident. To de
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Renamed to SubmitDock with a new endpoint, /wp-json/submitdock/v1/submit. Update your forms to the new address.
 
 = 1.0.1 =
 Shows who each notification was sent to and adds a View link to the submissions list.
