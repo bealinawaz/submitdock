@@ -1,5 +1,7 @@
 # SubmitDock
 
+Formerly Headless Form. Renamed to SubmitDock in 1.1.0; the REST endpoint is now `/wp-json/submitdock/v1/submit`.
+
 A self-hosted form backend for WordPress. Send any form from a static site, a headless front end (React, Next.js, Vue, Astro, Gatsby), a mobile app, or a server to a REST API endpoint. Every submission is saved in WordPress and emailed to you.
 
 ![Tested up to WordPress 7.1](https://img.shields.io/badge/WordPress-7.1-blue)
