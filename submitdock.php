@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       SubmitDock – Headless Form Backend via REST API
+ * Plugin Name:       SubmitDock
  * Plugin URI:        https://github.com/bealinawaz/submitdock
  * Description:       Receive form submissions from any website or app through a REST API endpoint. Submissions are saved in WordPress and emailed to you.
  * Version:           1.1.0

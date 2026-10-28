@@ -1,4 +1,4 @@
-=== SubmitDock – Headless Form Backend via REST API ===
+=== SubmitDock ===
 Contributors: imalinawaz
 Donate link: https://www.buymeacoffee.com/bealinawaz
 Tags: headless, form backend, contact form, rest api, form submissions
@@ -9,7 +9,7 @@ Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Receive form submissions from any website or app through a REST API endpoint. WordPress saves every submission and emails it to you.
+Headless form backend: receive form submissions from any website or app via a REST API. WordPress saves each one and emails it to you.
 
 == Description ==
 
