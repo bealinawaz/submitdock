@@ -538,7 +538,7 @@ final class SubmitDock_Admin {
 				)
 			);
 			self::code(
-				'Next.js server action',
+				__( 'Next.js server action', 'submitdock' ),
 				implode(
 					"\n",
 					array(

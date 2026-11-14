@@ -3,7 +3,7 @@
  * Plugin Name:       SubmitDock – Headless Form Backend
  * Plugin URI:        https://github.com/bealinawaz/submitdock
  * Description:       Receive form submissions from any website or app through a REST API endpoint. Submissions are saved in WordPress and emailed to you.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Ali Nawaz
@@ -11,13 +11,14 @@
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       submitdock
+ * Domain Path:       /languages
  *
  * @package SubmitDock
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SUBMITDOCK_VERSION', '1.2.0' );
+define( 'SUBMITDOCK_VERSION', '1.2.1' );
 define( 'SUBMITDOCK_FILE', __FILE__ );
 
 require_once __DIR__ . '/includes/class-submitdock-settings.php';

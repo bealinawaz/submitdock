@@ -48,7 +48,7 @@
 	padding: 4px 20px 12px;
 	background: #fff;
 	border: 1px solid #c3c4c7;
-	border-left: 4px solid #2271b1;
+	border-inline-start: 4px solid #2271b1;
 }
 
 .submitdock-support__actions {

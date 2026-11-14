@@ -5,7 +5,7 @@ Tags: headless, form backend, contact form, rest api, form submissions
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -131,6 +131,10 @@ The connecting IP address. Use the `submitdock_client_ip` filter to read the vis
 
 No, only the settings are removed, so messages are never lost by accident. To delete submissions too, define `SUBMITDOCK_DELETE_DATA` as true in wp-config.php before uninstalling.
 
+= Is the plugin available in my language? =
+
+The plugin is ready for translation, and translations are made by volunteers on WordPress.org. You can help translate it into your language at [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/submitdock/). Once a language is 90% translated, WordPress installs the translation automatically through language packs. A translation template, languages/submitdock.pot, is included for tools such as Poedit and Loco Translate.
+
 == Screenshots ==
 
 1. Form Submissions inbox with form name, sender email, website and notification status, plus CSV export and filters.
@@ -141,6 +145,11 @@ No, only the settings are removed, so messages are never lost by accident. To de
 6. The Spam folder, with Not spam actions to move a submission back to the inbox.
 
 == Changelog ==
+
+= 1.2.1 (2026-11-15) =
+* Translations: the "Next.js server action" label in the developer guide is now translatable, and a translation template (languages/submitdock.pot) is included.
+* Right-to-left languages: the support box uses logical CSS for Arabic, Hebrew, Urdu and other RTL languages.
+* Translations: response messages and the email subject that are left at their default are no longer saved in the language the settings were saved in, so visitors get them in their own language. Customized texts are kept.
 
 = 1.2.0 (2026-11-15) =
 * New: optional spam check with Cloudflare Turnstile, hCaptcha, or Google reCAPTCHA v2 and v3, verified on your server. Failed checks are refused and the token is never saved.
@@ -164,6 +173,9 @@ No, only the settings are removed, so messages are never lost by accident. To de
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+Translation and right-to-left language improvements. Nothing to change.
 
 = 1.2.0 =
 Adds optional Turnstile, hCaptcha, reCAPTCHA and Akismet spam checks, a Spam folder, and an API key for server-side code. Nothing changes until you turn them on.

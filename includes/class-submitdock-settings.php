@@ -104,7 +104,43 @@ final class SubmitDock_Settings {
 	 */
 	public static function get() {
 		$saved = get_option( self::OPTION, array() );
-		return array_replace( self::defaults(), is_array( $saved ) ? $saved : array() );
+		return array_replace( self::defaults(), self::without_defaults( is_array( $saved ) ? $saved : array() ) );
+	}
+
+	/**
+	 * Visitor-facing texts and their original English defaults.
+	 *
+	 * @return array
+	 */
+	private static function source_texts() {
+		return array(
+			'email_subject'          => sprintf( 'New form submission on %s', wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ),
+			'success_message'        => 'Thank you. Your message has been received.',
+			'mail_failed_message'    => 'Your message was saved, but the email notification could not be sent.',
+			'invalid_message'        => 'Your submission contains invalid or unsupported data.',
+			'origin_message'         => 'This website is not allowed to submit this form.',
+			'rate_limit_message'     => 'Too many submissions from this connection. Please wait and try again.',
+			'storage_failed_message' => 'Your message could not be saved. Please try again later.',
+			'spam_message'           => 'Your submission could not be accepted.',
+			'captcha_message'        => 'Please complete the spam check and try again.',
+		);
+	}
+
+	/**
+	 * Removes texts that match the default (in English or in the current language), so visitors
+	 * get the translated default in their own language.
+	 *
+	 * @param array $settings Settings.
+	 * @return array
+	 */
+	private static function without_defaults( array $settings ) {
+		$defaults = self::defaults();
+		foreach ( self::source_texts() as $key => $source ) {
+			if ( isset( $settings[ $key ] ) && ( $source === $settings[ $key ] || $defaults[ $key ] === $settings[ $key ] ) ) {
+				unset( $settings[ $key ] );
+			}
+		}
+		return $settings;
 	}
 
 	/**
@@ -202,6 +238,9 @@ final class SubmitDock_Settings {
 				self::error( $key, __( 'Response messages must be between 1 and 500 characters.', 'submitdock' ) );
 			}
 		}
+
+		// Texts left at their default are not saved, so visitors see them in their own language.
+		$output = self::without_defaults( $output );
 
 		return $output;
 	}

@@ -1,0 +1,874 @@
+# Copyright (C) 2026 Ali Nawaz
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: SubmitDock – Headless Form Backend 1.2.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/submitdock\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-14T21:33:23+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: submitdock\n"
+
+#. Plugin Name of the plugin
+#: submitdock.php
+msgid "SubmitDock – Headless Form Backend"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: submitdock.php
+msgid "https://github.com/bealinawaz/submitdock"
+msgstr ""
+
+#. Description of the plugin
+#: submitdock.php
+msgid "Receive form submissions from any website or app through a REST API endpoint. Submissions are saved in WordPress and emailed to you."
+msgstr ""
+
+#. Author of the plugin
+#: submitdock.php
+msgid "Ali Nawaz"
+msgstr ""
+
+#. Author URI of the plugin
+#: submitdock.php
+msgid "https://bealinawaz.com"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:40
+msgid "You are not allowed to change these settings."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:65
+#: includes/class-submitdock-spam.php:301
+msgid "Spam"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:76
+msgid "This submission is in the spam folder."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:80
+msgid "Moving it back to the inbox does not send the email notification."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:95
+msgid "Custom development"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:96
+#: includes/class-submitdock-admin.php:119
+msgid "Buy me a coffee"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:106
+msgid "Need help or a custom version?"
+msgstr ""
+
+#. translators: %s: link to the author's website.
+#: includes/class-submitdock-admin.php:111
+#, php-format
+msgid "SubmitDock is free and built by Ali Nawaz, a WordPress and full stack developer at %s. I can add file uploads, CRM, Slack, or webhook integrations, multi-step forms, or build your complete headless WordPress website."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:117
+msgid "Hire me for custom work"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:118
+msgid "Visit bealinawaz.com"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:130
+#: includes/class-submitdock-admin.php:199
+msgid "SubmitDock Settings"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:130
+#: includes/class-submitdock-admin.php:173
+msgid "Settings"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:131
+msgid "SubmitDock Developer Guide"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:131
+msgid "Developer guide"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:174
+msgid "Guide"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:202
+msgid "Your endpoint:"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:204
+msgid "How to connect a form"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:209
+msgid "Notifications"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:212
+msgid "Email notifications"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:213
+msgid "Email each submission"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:216
+msgid "Send to"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:220
+msgid "Subject"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:223
+msgid "Named forms add their name in brackets, for example [newsletter]."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:227
+msgid "Reply-to field"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:230
+msgid "The field that holds the sender's email address. Replying to a notification replies to the sender, and privacy requests find submissions by this address."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:235
+msgid "Security"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:238
+msgid "Allowed websites"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:241
+msgid "One origin per line, such as https://example.com. Browsers on other websites are refused. Leave empty to accept submissions from any website."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:245
+msgid "Spam trap field"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:248
+msgid "Add a hidden field with this name to your form. People leave it empty; bots fill it in, and those submissions are rejected."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:252
+msgid "Rate limit"
+msgstr ""
+
+#. translators: 1: number input, 2: minutes input.
+#: includes/class-submitdock-admin.php:257
+#, php-format
+msgid "%1$s submissions per visitor every %2$s minutes"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:258
+#: includes/class-submitdock-submissions.php:49
+msgid "Submissions"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:259
+msgid "Minutes"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:265
+#: includes/class-submitdock-admin.php:499
+msgid "Spam check (CAPTCHA)"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:268
+msgid "None"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:273
+msgid "Add the service's widget to your form, and SubmitDock checks its token with the service before saving. Submissions that fail the check are refused. The token is never saved."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:277
+msgid "Site key"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:280
+msgid "The public key your form's widget uses. It is shown in the Developer guide examples."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:284
+msgid "Secret key"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:286
+msgid "Saved. Enter a new key to replace it."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:288
+msgid "Remove the saved secret key"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:290
+msgid "From your Cloudflare, hCaptcha, or Google reCAPTCHA dashboard. It stays on your server."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:294
+msgid "reCAPTCHA v3 minimum score"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:297
+msgid "Only for reCAPTCHA v3. Scores go from 0.0 (likely a bot) to 1.0. Google suggests starting at 0.5."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:301
+msgid "Akismet"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:303
+msgid "Check each submission with Akismet and move spam to the Spam folder"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:307
+msgid "Sends the message, the sender's name and email, IP address, and browser to Akismet. Spam is saved without an email, and the sender sees the normal success message."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:309
+msgid "Install and connect the Akismet Anti-spam plugin to use this."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:316
+msgid "Keep spam for"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:318
+msgid "days"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:319
+msgid "Spam older than this is deleted permanently once a day. Enter 0 to keep it."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:324
+msgid "Privacy"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:327
+#: includes/class-submitdock-submissions.php:407
+msgid "IP address"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:328
+msgid "Save the visitor's IP address with each submission"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:331
+msgid "Location"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:333
+msgid "Look up the approximate city and country"
+msgstr ""
+
+#. translators: %s: link to ipwho.is.
+#: includes/class-submitdock-admin.php:338
+#, php-format
+msgid "Sends the visitor's IP address to %s. Requires saving IP addresses. Mention this in your privacy policy."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:347
+msgid "Messages"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:348
+msgid "Returned in the message field of each response, ready to show to visitors."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:378
+msgid "API key for server-side submissions"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:379
+msgid "Send the key in an X-SubmitDock-Key header from server-side code, such as a Next.js server action, an API route, or a mobile app backend. Requests with the key skip the allowed websites check, the spam check, and the rate limit, so never put the key in browser code."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:382
+msgid "Your new API key. Copy it now: it is shown only once."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:391
+msgid "An API key is set."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:392
+msgid "Replace key"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:393
+msgid "Remove key"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:395
+msgid "Create API key"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:413
+#: assets/admin.js:15
+msgid "Copy"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:434
+msgid "Connect a form"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:435
+msgid "Send any form to WordPress from a static site, React, Next.js, Vue, a mobile app, or a server. Every field you send is saved and emailed, with no form builder to set up."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:438
+msgid "Endpoint"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:439
+msgid "Named form"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:439
+msgid "Use lowercase letters, numbers, hyphens, and underscores. Filter submissions by form name."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:440
+msgid "Method"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:441
+msgid "Body"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:441
+msgid "A JSON object, or a regular form post (application/x-www-form-urlencoded or multipart/form-data). Files are not accepted."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:442
+msgid "Authentication"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:442
+msgid "None for browsers: it is a public endpoint, restricted to your websites under Settings. Server-side code can send an API key in the X-SubmitDock-Key header."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:445
+msgid "JavaScript (any framework)"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:473
+msgid "Values can be text, numbers, booleans, arrays (for checkbox groups), or nested objects."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:475
+msgid "Plain HTML, no JavaScript"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:476
+msgid "Add a __redirect field and the visitor returns to that page with ?form_status=success or ?form_status=error. Redirects only go to your allowed websites or this site."
+msgstr ""
+
+#. translators: 1: service name, 2: field name.
+#: includes/class-submitdock-admin.php:514
+#, php-format
+msgid "Choose a service under Settings, then add its widget inside your form. The widget adds a %2$s field, which SubmitDock checks with %1$s before saving. From JavaScript, send the token in that field or in __captcha."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:520
+msgid "Inside your form:"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:522
+msgid "No spam check service is selected yet, so this example uses Cloudflare Turnstile."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:525
+msgid "From a server"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:526
+msgid "Server-side code sends no Origin header, so create an API key under Settings and send it in the X-SubmitDock-Key header. Keyed requests skip the allowed websites check, the spam check and the rate limit. Pass your visitor's IP address and browser in __context so they are saved and used by Akismet."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:541
+msgid "Next.js server action"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:571
+msgid "Responses"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:573
+msgid "Saved and emailed."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:574
+msgid "Saved, but the email could not be sent. Treat it as success."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:575
+msgid "Invalid data, the spam trap was filled in, or the spam check (CAPTCHA) failed."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:576
+msgid "The website is not in the allowed list."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:577
+msgid "Rate limit reached."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:579
+msgid "Errors return JSON with a message field."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:581
+msgid "Limits"
+msgstr ""
+
+#. translators: 1: maximum fields, 2: maximum bytes.
+#: includes/class-submitdock-admin.php:584
+#, php-format
+msgid "Up to %1$d fields and %2$s bytes of data per submission."
+msgstr ""
+
+#. translators: %d: maximum characters.
+#: includes/class-submitdock-admin.php:586
+#, php-format
+msgid "Text values up to %d characters. Field names up to 100 characters."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:587
+msgid "Field names starting with __ are reserved and are not saved."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:590
+msgid "For developers"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:592
+msgid "filter the fields before saving, or return a WP_Error to reject the submission."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:593
+msgid "action after saving, for webhooks, CRMs, or Slack."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:594
+msgid "filter the notification email."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:595
+msgid "filter the visitor IP address, for sites behind a proxy or CDN."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:596
+msgid "action when a submission is saved to the Spam folder."
+msgstr ""
+
+#: includes/class-submitdock-api.php:517
+msgid "Tablet"
+msgstr ""
+
+#: includes/class-submitdock-api.php:519
+msgid "Mobile"
+msgstr ""
+
+#: includes/class-submitdock-api.php:519
+msgid "Desktop"
+msgstr ""
+
+#. translators: %s: page URL.
+#: includes/class-submitdock-api.php:571
+#, php-format
+msgid "Sent from: %s"
+msgstr ""
+
+#: includes/class-submitdock-privacy.php:33
+msgid "When you submit a form on this website, the information you enter is stored on this site and emailed to the site owner. Depending on the settings, the submission also stores the page you submitted it from, your browser and device type, your IP address, and an approximate location based on that IP address, looked up through the ipwho.is service."
+msgstr ""
+
+#: includes/class-submitdock-privacy.php:34
+msgid "To protect forms from spam, a form may use Cloudflare Turnstile, hCaptcha, or Google reCAPTCHA. The service checks your browser when you fill in the form, and this site sends the resulting token and your IP address to the service to confirm you are not a bot. Submissions may also be checked by Akismet, which receives the text you submitted, your name, email address, IP address, and browser details. Submissions marked as spam are kept for a limited time and then deleted."
+msgstr ""
+
+#: includes/class-submitdock-privacy.php:35
+msgid "SubmitDock"
+msgstr ""
+
+#: includes/class-submitdock-privacy.php:46
+#: includes/class-submitdock-privacy.php:60
+#: includes/class-submitdock-privacy.php:121
+msgid "Form submissions"
+msgstr ""
+
+#: includes/class-submitdock-privacy.php:102
+#: includes/class-submitdock-submissions.php:249
+msgid "Received"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:26
+msgid "Cloudflare Turnstile"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:32
+msgid "hCaptcha"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:38
+msgid "Google reCAPTCHA (v2 or v3)"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:53
+msgid "Success"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:54
+msgid "Saved, but the email failed"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:55
+msgid "Invalid submission"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:56
+msgid "Website not allowed"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:57
+msgid "Too many submissions"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:58
+msgid "Could not save"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:59
+msgid "Spam rejected"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:60
+msgid "Spam check failed"
+msgstr ""
+
+#. translators: %s: site name.
+#: includes/class-submitdock-settings.php:74
+#, php-format
+msgid "New form submission on %s"
+msgstr ""
+
+#: includes/class-submitdock-settings.php:82
+msgid "Thank you. Your message has been received."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:83
+msgid "Your message was saved, but the email notification could not be sent."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:84
+msgid "Your submission contains invalid or unsupported data."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:85
+msgid "This website is not allowed to submit this form."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:86
+msgid "Too many submissions from this connection. Please wait and try again."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:87
+msgid "Your message could not be saved. Please try again later."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:88
+msgid "Your submission could not be accepted."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:89
+msgid "Please complete the spam check and try again."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:163
+msgid "Enter a valid notification email address."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:174
+msgid "The email subject cannot be empty."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:181
+#: includes/class-submitdock-settings.php:188
+msgid "Field names can contain only letters, numbers, underscores, periods, and hyphens."
+msgstr ""
+
+#. translators: %s: the rejected origin.
+#: includes/class-submitdock-settings.php:201
+#, php-format
+msgid "\"%s\" is not a valid origin and was ignored. Enter only a scheme and host, for example https://example.com."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:221
+msgid "Enter the secret key for your spam check service. Until you do, submissions are not checked."
+msgstr ""
+
+#. translators: 1: minimum days, 2: maximum days.
+#: includes/class-submitdock-settings.php:227
+#, php-format
+msgid "Days to keep spam must be between %1$d and %2$d."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:238
+msgid "Response messages must be between 1 and 500 characters."
+msgstr ""
+
+#. translators: 1: minimum, 2: maximum.
+#: includes/class-submitdock-settings.php:298
+#, php-format
+msgid "Rate limit values must be between %1$d and %2$d."
+msgstr ""
+
+#: includes/class-submitdock-spam.php:42
+#: includes/class-submitdock-spam.php:273
+msgctxt "submission status"
+msgid "Spam"
+msgstr ""
+
+#. translators: %s: number of spam submissions.
+#: includes/class-submitdock-spam.php:50
+#, php-format
+msgid "Spam <span class=\"count\">(%s)</span>"
+msgid_plural "Spam <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-submitdock-spam.php:257
+msgid "Akismet flagged it as spam"
+msgstr ""
+
+#: includes/class-submitdock-spam.php:258
+msgid "The spam check service could not be reached"
+msgstr ""
+
+#: includes/class-submitdock-spam.php:259
+msgid "Marked as spam by an admin"
+msgstr ""
+
+#: includes/class-submitdock-spam.php:301
+msgid "Not spam"
+msgstr ""
+
+#: includes/class-submitdock-spam.php:314
+msgid "You are not allowed to change this submission."
+msgstr ""
+
+#: includes/class-submitdock-spam.php:359
+msgid "Submission moved to Spam."
+msgstr ""
+
+#: includes/class-submitdock-spam.php:361
+msgid "Submission moved back to the inbox."
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:46
+#: includes/class-submitdock-submissions.php:48
+msgid "Form Submissions"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:47
+#: includes/class-submitdock-submissions.php:50
+#: includes/class-submitdock-submissions.php:244
+msgid "Submission"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:51
+msgid "View submission"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:52
+msgid "Search submissions"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:53
+msgid "No submissions yet."
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:54
+msgid "No submissions in the Trash."
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:115
+msgid "Form submission"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:147
+msgid "Yes"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:147
+msgid "No"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:173
+msgid "Pending"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:174
+msgid "Sent"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:175
+msgid "Failed, submission saved"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:176
+msgid "Notifications off"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:177
+msgid "Not sent (spam)"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:179
+msgid "Unknown"
+msgstr ""
+
+#. translators: %s: recipient email addresses.
+#: includes/class-submitdock-submissions.php:196
+#, php-format
+msgid "Sent to %s"
+msgstr ""
+
+#. translators: %s: recipient email addresses.
+#: includes/class-submitdock-submissions.php:200
+#, php-format
+msgid "Failed to send to %s, submission saved"
+msgstr ""
+
+#. translators: %s: submission title.
+#: includes/class-submitdock-submissions.php:225
+#, php-format
+msgid "View “%s”"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:226
+msgid "View"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:245
+#: includes/class-submitdock-submissions.php:449
+msgid "Form"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:246
+msgid "Email"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:247
+#: includes/class-submitdock-submissions.php:406
+msgid "Website"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:248
+#: includes/class-submitdock-submissions.php:449
+msgid "Notification"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:294
+msgid "Filter by form"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:295
+msgid "All forms"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:304
+msgid "Export CSV"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:346
+msgid "Submitted fields"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:347
+msgid "Visitor details"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:359
+msgid "No fields were saved."
+msgstr ""
+
+#. translators: %s: form identifier.
+#: includes/class-submitdock-submissions.php:364
+#, php-format
+msgid "Form: %s"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:393
+msgid "Email notification"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:404
+msgid "Page URL"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:405
+msgid "Referrer"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:408
+msgid "Browser"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:409
+msgid "Operating system"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:410
+msgid "Device"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:411
+msgid "User agent"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:412
+msgid "City"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:413
+msgid "Region"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:414
+msgid "Country"
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:423
+msgid "You are not allowed to export submissions."
+msgstr ""
+
+#: includes/class-submitdock-submissions.php:449
+msgid "Received (UTC)"
+msgstr ""
+
+#: assets/admin.js:9
+msgid "Copied"
+msgstr ""
+
+#: assets/admin.js:12
+msgid "Press Ctrl+C to copy"
+msgstr ""
