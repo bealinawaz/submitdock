@@ -17,7 +17,9 @@ No form builder and no field setup: build the form however you like, and the end
 - **Named forms:** `/submit/newsletter`, `/submit/quote`, and so on, filterable in the dashboard.
 - **Email notifications** with Reply-To set to the sender.
 - **Allowed websites:** CORS and an origin check restrict which websites can submit.
-- **Spam protection:** a configurable honeypot field and a per-IP rate limit.
+- **Spam protection:** a configurable honeypot field, a per-IP rate limit, and optional Cloudflare Turnstile, hCaptcha, or Google reCAPTCHA (v2/v3) checks, verified server-side.
+- **Akismet and a Spam folder:** with the Akismet plugin connected, suspected spam is kept in a Spam folder without an email. Spam / Not spam actions report back to Akismet, and old spam is purged daily (30 days by default).
+- **API key for server-side code:** send `X-SubmitDock-Key` from a Next.js server action, an API route, or an app backend. Keyed requests skip the origin check, CAPTCHA, and rate limit.
 - **Dashboard inbox** with CSV export.
 - **Privacy:** WordPress personal data export and erasure by email address, optional IP storage, and optional IP geolocation (off by default).
 - **Hooks** to validate fields, forward submissions to a CRM, Slack, or webhook, and customize the email.
@@ -64,15 +66,16 @@ The **Developer guide** screen in the dashboard shows these examples with your o
 | --- | --- |
 | Endpoint | `POST /wp-json/submitdock/v1/submit` or `/submit/{form}` (`a-z0-9_-`, up to 64 characters) |
 | Body | JSON object, `application/x-www-form-urlencoded`, or `multipart/form-data` (no files) |
-| Reserved keys | `__context` (page_url, referrer), `__redirect` (HTML forms), and the honeypot field. Keys starting with `__` are never saved. |
+| Reserved keys | `__context` (page_url, referrer; with the API key also ip_address, user_agent), `__redirect` (HTML forms), `__captcha`, the CAPTCHA widget fields (`cf-turnstile-response`, `h-captcha-response`, `g-recaptcha-response`), and the honeypot field. Keys starting with `__` and CAPTCHA tokens are never saved. |
+| Auth | None for browsers (origin allow-list). Server-side: `X-SubmitDock-Key: <key>` from Settings; the key is shown once and stored as a SHA-256 hash. |
 | Limits | 50 fields, 20,000 bytes, 5,000 characters per text value, 100 items per array, 5 levels of nesting |
 
 | Status | Meaning |
 | --- | --- |
 | `200` | Saved and emailed: `{"success": true, "message": "…", "email_status": "sent"}` |
 | `202` | Saved, email failed (`email_status: "failed"`). Treat as success. |
-| `400` | Invalid data or spam trap filled |
-| `403` | Origin not allowed. Server-to-server requests send no Origin, so they need an empty allow-list. |
+| `400` | Invalid data, spam trap filled, or CAPTCHA check failed |
+| `403` | Origin not allowed and no valid API key. Server-to-server requests send no Origin, so use the API key. |
 | `429` | Rate limit reached |
 
 ## Hooks
@@ -92,13 +95,16 @@ add_action( 'submitdock_submission_saved', function ( $post_id, $fields, $form, 
 }, 10, 4 );
 ```
 
-Also available: `submitdock_email` (change the notification) and `submitdock_client_ip` (read the real IP behind a proxy or CDN).
+Also available: `submitdock_email` (change the notification), `submitdock_client_ip` (read the real IP behind a proxy or CDN), and `submitdock_submission_spam` (fires when a submission is saved to the Spam folder).
+
+Suspected spam (Akismet, or a CAPTCHA service that could not be reached) is saved with the `submitdock_spam` post status and no email, and the sender receives the normal success response.
 
 ## Project structure
 
 ```
 submitdock.php                         Plugin header and bootstrap
-includes/class-submitdock-api.php      REST route, validation, rate limit, notification email
+includes/class-submitdock-api.php      REST route, validation, rate limit, API key, notification email
+includes/class-submitdock-spam.php     CAPTCHA verification, Akismet, Spam folder and daily purge
 includes/class-submitdock-submissions.php  Submission post type, inbox columns, CSV export
 includes/class-submitdock-settings.php Settings defaults and validation
 includes/class-submitdock-admin.php    Settings screen and developer guide

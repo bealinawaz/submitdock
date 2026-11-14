@@ -16,6 +16,34 @@ final class SubmitDock_Settings {
 	const GROUP  = 'submitdock';
 
 	/**
+	 * CAPTCHA services the endpoint can check, with the field name each widget adds to the form.
+	 *
+	 * @return array Keys: label, field, verify_url, docs.
+	 */
+	public static function captcha_providers() {
+		return array(
+			'turnstile' => array(
+				'label'      => __( 'Cloudflare Turnstile', 'submitdock' ),
+				'field'      => 'cf-turnstile-response',
+				'verify_url' => 'https://challenges.cloudflare.com/turnstile/v0/siteverify', // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Server-side token check called with wp_remote_post(), nothing is loaded in the browser.
+				'docs'       => 'https://developers.cloudflare.com/turnstile/', // phpcs:ignore PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Documentation link, not a loaded resource.
+			),
+			'hcaptcha'  => array(
+				'label'      => __( 'hCaptcha', 'submitdock' ),
+				'field'      => 'h-captcha-response',
+				'verify_url' => 'https://api.hcaptcha.com/siteverify',
+				'docs'       => 'https://docs.hcaptcha.com/',
+			),
+			'recaptcha' => array(
+				'label'      => __( 'Google reCAPTCHA (v2 or v3)', 'submitdock' ),
+				'field'      => 'g-recaptcha-response',
+				'verify_url' => 'https://www.google.com/recaptcha/api/siteverify',
+				'docs'       => 'https://developers.google.com/recaptcha',
+			),
+		);
+	}
+
+	/**
 	 * Response messages shown to visitors, keyed by setting name.
 	 *
 	 * @return array
@@ -29,6 +57,7 @@ final class SubmitDock_Settings {
 			'rate_limit_message'     => __( 'Too many submissions', 'submitdock' ),
 			'storage_failed_message' => __( 'Could not save', 'submitdock' ),
 			'spam_message'           => __( 'Spam rejected', 'submitdock' ),
+			'captcha_message'        => __( 'Spam check failed', 'submitdock' ),
 		);
 	}
 
@@ -57,6 +86,14 @@ final class SubmitDock_Settings {
 			'rate_limit_message'     => __( 'Too many submissions from this connection. Please wait and try again.', 'submitdock' ),
 			'storage_failed_message' => __( 'Your message could not be saved. Please try again later.', 'submitdock' ),
 			'spam_message'           => __( 'Your submission could not be accepted.', 'submitdock' ),
+			'captcha_message'        => __( 'Please complete the spam check and try again.', 'submitdock' ),
+			'captcha_provider'       => '',
+			'captcha_site_key'       => '',
+			'captcha_secret'         => '',
+			'recaptcha_min_score'    => 0.5,
+			'akismet'                => false,
+			'api_key_hash'           => '',
+			'spam_retention_days'    => 30,
 		);
 	}
 
@@ -132,6 +169,28 @@ final class SubmitDock_Settings {
 		}
 		$output['allowed_origins'] = array_values( array_unique( $origins ) );
 
+		$providers                  = self::captcha_providers();
+		$provider                   = isset( $input['captcha_provider'] ) ? sanitize_key( (string) $input['captcha_provider'] ) : '';
+		$output['captcha_provider'] = isset( $providers[ $provider ] ) ? $provider : '';
+		$output['captcha_site_key'] = isset( $input['captcha_site_key'] ) ? self::key_text( $input['captcha_site_key'] ) : '';
+		// The secret field is left empty in the form; an empty value keeps the saved secret.
+		$secret = isset( $input['captcha_secret'] ) ? self::key_text( $input['captcha_secret'] ) : '';
+		if ( '' !== $secret ) {
+			$output['captcha_secret'] = $secret;
+		}
+		if ( ! empty( $input['captcha_secret_clear'] ) ) {
+			$output['captcha_secret'] = '';
+		}
+		if ( '' !== $output['captcha_provider'] && '' === $output['captcha_secret'] ) {
+			self::error( 'captcha_secret', __( 'Enter the secret key for your spam check service. Until you do, submissions are not checked.', 'submitdock' ) );
+		}
+		$score                         = isset( $input['recaptcha_min_score'] ) ? (float) $input['recaptcha_min_score'] : 0.5;
+		$output['recaptcha_min_score'] = min( 1.0, max( 0.0, round( $score, 1 ) ) );
+		$output['akismet']             = ! empty( $input['akismet'] );
+		/* translators: 1: minimum days, 2: maximum days. */
+		$days_message                  = __( 'Days to keep spam must be between %1$d and %2$d.', 'submitdock' );
+		$output['spam_retention_days'] = self::bounded_int( $input['spam_retention_days'] ?? null, $current['spam_retention_days'], 0, 365, $days_message );
+
 		$output['rate_limit']          = self::bounded_int( $input['rate_limit'] ?? null, $current['rate_limit'], 1, 100 );
 		$output['rate_window_minutes'] = self::bounded_int( $input['rate_window_minutes'] ?? null, $current['rate_window_minutes'], 1, 1440 );
 
@@ -186,20 +245,106 @@ final class SubmitDock_Settings {
 	/**
 	 * Returns an integer within bounds, or the fallback.
 	 *
-	 * @param mixed $value    Submitted value.
-	 * @param int   $fallback Value to keep when invalid.
-	 * @param int   $min      Minimum.
-	 * @param int   $max      Maximum.
+	 * @param mixed  $value    Submitted value.
+	 * @param int    $fallback Value to keep when invalid.
+	 * @param int    $min      Minimum.
+	 * @param int    $max      Maximum.
+	 * @param string $message  Error message with %1$d and %2$d for the bounds.
 	 * @return int
 	 */
-	private static function bounded_int( $value, $fallback, $min, $max ) {
+	private static function bounded_int( $value, $fallback, $min, $max, $message = '' ) {
 		$integer = filter_var( $value, FILTER_VALIDATE_INT );
 		if ( false === $integer || $integer < $min || $integer > $max ) {
 			/* translators: 1: minimum, 2: maximum. */
-			self::error( 'range_' . $min . '_' . $max, sprintf( __( 'Rate limit values must be between %1$d and %2$d.', 'submitdock' ), $min, $max ) );
+			$message = '' !== $message ? $message : __( 'Rate limit values must be between %1$d and %2$d.', 'submitdock' );
+			self::error( 'range_' . $min . '_' . $max, sprintf( $message, $min, $max ) );
 			return (int) $fallback;
 		}
 		return $integer;
+	}
+
+	/**
+	 * A CAPTCHA key: letters, numbers, hyphens, underscores and periods only.
+	 *
+	 * @param mixed $value Submitted value.
+	 * @return string
+	 */
+	private static function key_text( $value ) {
+		$value = trim( sanitize_text_field( (string) $value ) );
+		return preg_match( '/^[A-Za-z0-9_.-]{1,200}$/D', $value ) ? $value : '';
+	}
+
+	/**
+	 * Whether a CAPTCHA check is set up (service chosen and secret saved).
+	 *
+	 * @return bool
+	 */
+	public static function captcha_enabled() {
+		$s = self::get();
+		return '' !== $s['captcha_provider'] && '' !== $s['captcha_secret'];
+	}
+
+	/**
+	 * Whether the Akismet check is on and Akismet is active with a key.
+	 *
+	 * @return bool
+	 */
+	public static function akismet_enabled() {
+		return self::get()['akismet'] && self::akismet_available();
+	}
+
+	/**
+	 * Whether the Akismet plugin is active and connected.
+	 *
+	 * @return bool
+	 */
+	public static function akismet_available() {
+		return class_exists( 'Akismet' ) && is_callable( array( 'Akismet', 'get_api_key' ) ) && '' !== (string) Akismet::get_api_key();
+	}
+
+	/**
+	 * Creates a new API key, saves its hash, and returns the key. Replaces any earlier key.
+	 *
+	 * @return string
+	 */
+	public static function regenerate_api_key() {
+		$key                   = 'sdk_' . wp_generate_password( 40, false, false );
+		$saved                 = get_option( self::OPTION, array() );
+		$saved                 = is_array( $saved ) ? $saved : array();
+		$saved['api_key_hash'] = hash( 'sha256', $key );
+		self::update_raw( $saved );
+		return $key;
+	}
+
+	/**
+	 * Removes the API key.
+	 */
+	public static function revoke_api_key() {
+		$saved                 = get_option( self::OPTION, array() );
+		$saved                 = is_array( $saved ) ? $saved : array();
+		$saved['api_key_hash'] = '';
+		self::update_raw( $saved );
+	}
+
+	/**
+	 * Saves the option without running the settings form sanitizer.
+	 *
+	 * @param array $value Option value.
+	 */
+	private static function update_raw( array $value ) {
+		remove_filter( 'sanitize_option_' . self::OPTION, array( __CLASS__, 'sanitize' ) );
+		update_option( self::OPTION, $value );
+	}
+
+	/**
+	 * Whether a key matches the saved API key.
+	 *
+	 * @param string $key Key from the request.
+	 * @return bool
+	 */
+	public static function api_key_matches( $key ) {
+		$hash = (string) self::get()['api_key_hash'];
+		return '' !== $hash && '' !== $key && hash_equals( $hash, hash( 'sha256', $key ) );
 	}
 
 	/**

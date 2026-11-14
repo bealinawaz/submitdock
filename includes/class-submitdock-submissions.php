@@ -77,13 +77,14 @@ final class SubmitDock_Submissions {
 	 * @param array  $visitor Visitor details.
 	 * @param string $form    Form identifier, or an empty string.
 	 * @param string $email   Sender email address, or an empty string.
+	 * @param bool   $spam    Whether to save it in the spam folder.
 	 * @return int|WP_Error
 	 */
-	public static function create( array $fields, array $visitor, $form, $email ) {
+	public static function create( array $fields, array $visitor, $form, $email, $spam = false ) {
 		$post_id = wp_insert_post(
 			array(
 				'post_type'   => self::POST_TYPE,
-				'post_status' => 'private',
+				'post_status' => $spam ? SubmitDock_Spam::STATUS : 'private',
 				'post_title'  => self::title_for( $fields, $form ),
 				'meta_input'  => array(
 					self::META_FIELDS  => $fields,
@@ -173,6 +174,7 @@ final class SubmitDock_Submissions {
 			'sent'     => __( 'Sent', 'submitdock' ),
 			'failed'   => __( 'Failed, submission saved', 'submitdock' ),
 			'disabled' => __( 'Notifications off', 'submitdock' ),
+			'spam'     => __( 'Not sent (spam)', 'submitdock' ),
 		);
 		return $labels[ $status ] ?? __( 'Unknown', 'submitdock' );
 	}
@@ -238,13 +240,13 @@ final class SubmitDock_Submissions {
 	 */
 	public static function columns( $columns ) {
 		return array(
-			'cb'           => $columns['cb'],
-			'title'        => __( 'Submission', 'submitdock' ),
+			'cb'                  => $columns['cb'],
+			'title'               => __( 'Submission', 'submitdock' ),
 			'submitdock_form'     => __( 'Form', 'submitdock' ),
 			'submitdock_email'    => __( 'Email', 'submitdock' ),
 			'submitdock_origin'   => __( 'Website', 'submitdock' ),
 			'submitdock_delivery' => __( 'Notification', 'submitdock' ),
-			'date'         => __( 'Received', 'submitdock' ),
+			'date'                => __( 'Received', 'submitdock' ),
 		);
 	}
 

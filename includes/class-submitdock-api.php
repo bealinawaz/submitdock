@@ -79,12 +79,17 @@ final class SubmitDock_API {
 	}
 
 	/**
-	 * Rejects requests from websites that are not on the allow-list.
+	 * Rejects requests from websites that are not on the allow-list. Requests with a valid
+	 * API key, such as server-side code, are always allowed.
 	 *
+	 * @param WP_REST_Request|null $request Request.
 	 * @return true|WP_Error
 	 */
-	public static function check_origin() {
+	public static function check_origin( $request = null ) {
 		$settings = SubmitDock_Settings::get();
+		if ( $request instanceof WP_REST_Request && self::has_valid_key( $request ) ) {
+			return true;
+		}
 		if ( ! $settings['allowed_origins'] ) {
 			return true;
 		}
@@ -93,6 +98,17 @@ final class SubmitDock_API {
 			return true;
 		}
 		return new WP_Error( 'submitdock_origin', $settings['origin_message'], array( 'status' => 403 ) );
+	}
+
+	/**
+	 * Whether the request carries the site's API key in the X-SubmitDock-Key header.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return bool
+	 */
+	public static function has_valid_key( WP_REST_Request $request ) {
+		$key = (string) $request->get_header( 'x_submitdock_key' );
+		return '' !== $key && SubmitDock_Settings::api_key_matches( $key );
 	}
 
 	/**
@@ -106,16 +122,24 @@ final class SubmitDock_API {
 		$is_json  = null !== $request->get_json_params();
 		$payload  = $is_json ? $request->get_json_params() : $request->get_body_params();
 
-		$limited = self::check_rate_limit( $settings );
-		if ( is_wp_error( $limited ) ) {
-			return self::respond( $limited, $is_json, $payload );
+		// Requests with the API key come from the site owner's own server, which applies its own protection.
+		$trusted = self::has_valid_key( $request );
+		if ( ! $trusted ) {
+			$limited = self::check_rate_limit( $settings );
+			if ( is_wp_error( $limited ) ) {
+				return self::respond( $limited, $is_json, $payload );
+			}
 		}
 
 		if ( ! is_array( $payload ) || ! $payload || wp_is_numeric_array( $payload ) ) {
 			return self::respond( self::error( 'invalid', $settings['invalid_message'], 400 ), $is_json, $payload );
 		}
 
+		$token   = SubmitDock_Spam::extract_token( $payload );
 		$context = isset( $payload['__context'] ) && is_array( $payload['__context'] ) ? $payload['__context'] : array();
+		if ( ! $payload ) {
+			return self::respond( self::error( 'invalid', $settings['invalid_message'], 400 ), $is_json, $payload );
+		}
 		// Keys starting with __ are reserved for instructions such as __context and __redirect.
 		$fields = array_filter(
 			$payload,
@@ -149,17 +173,68 @@ final class SubmitDock_API {
 			return self::respond( $fields, $is_json, $payload );
 		}
 
+		// A trusted server can pass on its visitor's IP address and browser for the spam checks.
+		$ip    = $trusted && isset( $context['ip_address'] ) && is_string( $context['ip_address'] ) && filter_var( $context['ip_address'], FILTER_VALIDATE_IP ) ? $context['ip_address'] : self::client_ip();
+		$agent = $trusted && isset( $context['user_agent'] ) && is_string( $context['user_agent'] ) ? substr( sanitize_text_field( $context['user_agent'] ), 0, 500 ) : substr( sanitize_text_field( (string) $request->get_header( 'user_agent' ) ), 0, 500 );
+
+		$spam = '';
+		if ( ! $trusted && SubmitDock_Settings::captcha_enabled() ) {
+			$check = SubmitDock_Spam::verify_captcha( $token, $ip );
+			if ( 'fail' === $check ) {
+				return self::respond( self::error( 'captcha', $settings['captcha_message'], 400 ), $is_json, $payload );
+			}
+			// If the service is down, keep the message in the spam folder rather than lose it.
+			if ( 'error' === $check ) {
+				$spam = 'captcha_error';
+			}
+		}
+
 		$form    = (string) $request->get_param( 'form' );
-		$visitor = self::visitor_details( $request, $context, $settings );
+		$visitor = self::visitor_details( $request, $context, $settings, $trusted ? $ip : '', $trusted ? $agent : '' );
 		$email   = '';
 		$reply   = $settings['reply_to_field'];
 		if ( '' !== $reply && isset( $fields[ $reply ] ) && is_string( $fields[ $reply ] ) && is_email( $fields[ $reply ] ) ) {
 			$email = sanitize_email( $fields[ $reply ] );
 		}
 
-		$post_id = SubmitDock_Submissions::create( $fields, $visitor, $form, $email );
+		$akismet = array();
+		if ( '' === $spam && SubmitDock_Settings::akismet_enabled() ) {
+			$akismet = SubmitDock_Spam::akismet_data( $fields, $email, $visitor, $ip, $agent );
+			if ( SubmitDock_Spam::akismet_is_spam( $akismet ) ) {
+				$spam = 'akismet';
+			}
+		}
+
+		$post_id = SubmitDock_Submissions::create( $fields, $visitor, $form, $email, '' !== $spam );
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
 			return self::respond( self::error( 'storage', $settings['storage_failed_message'], 500 ), $is_json, $payload );
+		}
+		if ( $akismet ) {
+			update_post_meta( $post_id, SubmitDock_Spam::META_CHECK, $akismet );
+		}
+
+		// Suspected spam is kept for review, without an email. The sender sees the normal success message.
+		if ( '' !== $spam ) {
+			update_post_meta( $post_id, SubmitDock_Spam::META_REASON, $spam );
+			update_post_meta( $post_id, SubmitDock_Submissions::META_STATUS, 'spam' );
+
+			/**
+			 * Fires when a submission is saved to the spam folder.
+			 *
+			 * @param int    $post_id Submission ID.
+			 * @param string $spam    Reason: akismet or captcha_error.
+			 * @param array  $fields  Sanitized fields.
+			 */
+			do_action( 'submitdock_submission_spam', $post_id, $spam, $fields );
+			$response = new WP_REST_Response(
+				array(
+					'success'      => true,
+					'message'      => $settings['success_message'],
+					'email_status' => 'disabled',
+				),
+				200
+			);
+			return self::respond( $response, $is_json, $payload );
 		}
 
 		$status = 'disabled';
@@ -335,11 +410,13 @@ final class SubmitDock_API {
 	 *
 	 * @param WP_REST_Request $request  Request.
 	 * @param array           $context  Client-supplied __context.
-	 * @param array           $settings Settings.
+	 * @param array           $settings      Settings.
+	 * @param string          $trusted_ip    Visitor IP passed on by a server with the API key.
+	 * @param string          $trusted_agent Visitor user agent passed on by a server with the API key.
 	 * @return array
 	 */
-	private static function visitor_details( WP_REST_Request $request, array $context, array $settings ) {
-		$agent    = substr( sanitize_text_field( (string) $request->get_header( 'user_agent' ) ), 0, 500 );
+	private static function visitor_details( WP_REST_Request $request, array $context, array $settings, $trusted_ip = '', $trusted_agent = '' ) {
+		$agent    = '' !== $trusted_agent ? $trusted_agent : substr( sanitize_text_field( (string) $request->get_header( 'user_agent' ) ), 0, 500 );
 		$referer  = (string) $request->get_header( 'referer' );
 		$page_url = self::context_url( $context['page_url'] ?? $context['submission_url'] ?? '' );
 		$details  = array(
@@ -354,7 +431,7 @@ final class SubmitDock_API {
 		);
 
 		if ( $settings['store_ip'] ) {
-			$details['ip_address'] = self::client_ip();
+			$details['ip_address'] = '' !== $trusted_ip ? $trusted_ip : self::client_ip();
 			if ( $settings['location_lookup'] ) {
 				$details = array_merge( $details, self::location( $details['ip_address'] ) );
 			}

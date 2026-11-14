@@ -30,7 +30,8 @@ final class SubmitDock_Privacy {
 		if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
 			return;
 		}
-		$text = '<p>' . esc_html__( 'When you submit a form on this website, the information you enter is stored on this site and emailed to the site owner. Depending on the settings, the submission also stores the page you submitted it from, your browser and device type, your IP address, and an approximate location based on that IP address, looked up through the ipwho.is service.', 'submitdock' ) . '</p>';
+		$text  = '<p>' . esc_html__( 'When you submit a form on this website, the information you enter is stored on this site and emailed to the site owner. Depending on the settings, the submission also stores the page you submitted it from, your browser and device type, your IP address, and an approximate location based on that IP address, looked up through the ipwho.is service.', 'submitdock' ) . '</p>';
+		$text .= '<p>' . esc_html__( 'To protect forms from spam, a form may use Cloudflare Turnstile, hCaptcha, or Google reCAPTCHA. The service checks your browser when you fill in the form, and this site sends the resulting token and your IP address to the service to confirm you are not a bot. Submissions may also be checked by Akismet, which receives the text you submitted, your name, email address, IP address, and browser details. Submissions marked as spam are kept for a limited time and then deleted.', 'submitdock' ) . '</p>';
 		wp_add_privacy_policy_content( __( 'SubmitDock', 'submitdock' ), $text );
 	}
 
@@ -73,7 +74,8 @@ final class SubmitDock_Privacy {
 		return get_posts(
 			array(
 				'post_type'      => SubmitDock_Submissions::POST_TYPE,
-				'post_status'    => 'any',
+				// Spam is included: it can still hold the sender's personal data.
+				'post_status'    => array( 'private', 'publish', 'draft', SubmitDock_Spam::STATUS ),
 				'posts_per_page' => self::PAGE_SIZE,
 				'paged'          => $page,
 				'fields'         => 'ids',

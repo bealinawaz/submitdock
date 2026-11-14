@@ -27,6 +27,58 @@ final class SubmitDock_Admin {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( SUBMITDOCK_FILE ), array( __CLASS__, 'action_links' ) );
 		add_filter( 'plugin_row_meta', array( __CLASS__, 'row_meta' ), 10, 2 );
+		add_action( 'admin_post_submitdock_api_key', array( __CLASS__, 'handle_api_key' ) );
+		add_action( 'add_meta_boxes_' . SubmitDock_Submissions::POST_TYPE, array( __CLASS__, 'add_spam_box' ) );
+	}
+
+	/**
+	 * Creates or removes the API key, then returns to Settings. A new key is shown once.
+	 */
+	public static function handle_api_key() {
+		check_admin_referer( 'submitdock_api_key' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You are not allowed to change these settings.', 'submitdock' ), 403 );
+		}
+		$do   = isset( $_POST['do'] ) ? sanitize_key( wp_unslash( $_POST['do'] ) ) : '';
+		$args = array(
+			'post_type' => SubmitDock_Submissions::POST_TYPE,
+			'page'      => self::SETTINGS_PAGE,
+		);
+		if ( 'revoke' === $do ) {
+			SubmitDock_Settings::revoke_api_key();
+			$args['submitdock_key'] = 'revoked';
+		} else {
+			set_transient( 'submitdock_new_key_' . get_current_user_id(), SubmitDock_Settings::regenerate_api_key(), 10 * MINUTE_IN_SECONDS );
+			$args['submitdock_key'] = 'created';
+		}
+		wp_safe_redirect( add_query_arg( $args, admin_url( 'edit.php' ) ) . '#submitdock-api-key' );
+		exit;
+	}
+
+	/**
+	 * Adds a box explaining why a submission is in the spam folder.
+	 *
+	 * @param WP_Post $post Submission.
+	 */
+	public static function add_spam_box( $post ) {
+		if ( SubmitDock_Spam::STATUS === $post->post_status ) {
+			add_meta_box( 'submitdock-spam', __( 'Spam', 'submitdock' ), array( __CLASS__, 'render_spam_box' ), null, 'side', 'high' );
+		}
+	}
+
+	/**
+	 * Prints the spam box.
+	 *
+	 * @param WP_Post $post Submission.
+	 */
+	public static function render_spam_box( $post ) {
+		$reason = SubmitDock_Spam::reason_label( (string) get_post_meta( $post->ID, SubmitDock_Spam::META_REASON, true ) );
+		echo '<p>' . esc_html( '' !== $reason ? $reason : __( 'This submission is in the spam folder.', 'submitdock' ) ) . '</p>';
+		$actions = SubmitDock_Spam::row_actions( array(), $post );
+		if ( isset( $actions['submitdock_spam'] ) ) {
+			echo '<p>' . str_replace( '<a ', '<a class="button" ', wp_kses_post( $actions['submitdock_spam'] ) ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by wp_kses_post.
+			echo '<p class="description">' . esc_html__( 'Moving it back to the inbox does not send the email notification.', 'submitdock' ) . '</p>';
+		}
 	}
 
 	/**
@@ -145,6 +197,7 @@ final class SubmitDock_Admin {
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'SubmitDock Settings', 'submitdock' ); ?></h1>
+			<?php settings_errors(); ?>
 			<p>
 				<?php esc_html_e( 'Your endpoint:', 'submitdock' ); ?>
 				<code><?php echo esc_html( SubmitDock_API::endpoint() ); ?></code>
@@ -208,6 +261,64 @@ final class SubmitDock_Admin {
 							?>
 						</td>
 					</tr>
+					<tr>
+						<th scope="row"><label for="submitdock-captcha"><?php esc_html_e( 'Spam check (CAPTCHA)', 'submitdock' ); ?></label></th>
+						<td>
+							<select id="submitdock-captcha" name="<?php echo esc_attr( self::name( 'captcha_provider' ) ); ?>">
+								<option value="" <?php selected( $s['captcha_provider'], '' ); ?>><?php esc_html_e( 'None', 'submitdock' ); ?></option>
+								<?php foreach ( SubmitDock_Settings::captcha_providers() as $slug => $provider ) : ?>
+									<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $s['captcha_provider'], $slug ); ?>><?php echo esc_html( $provider['label'] ); ?></option>
+								<?php endforeach; ?>
+							</select>
+							<p class="description"><?php esc_html_e( 'Add the service\'s widget to your form, and SubmitDock checks its token with the service before saving. Submissions that fail the check are refused. The token is never saved.', 'submitdock' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="submitdock-site-key"><?php esc_html_e( 'Site key', 'submitdock' ); ?></label></th>
+						<td>
+							<input id="submitdock-site-key" class="regular-text code" type="text" autocomplete="off" name="<?php echo esc_attr( self::name( 'captcha_site_key' ) ); ?>" value="<?php echo esc_attr( $s['captcha_site_key'] ); ?>" />
+							<p class="description"><?php esc_html_e( 'The public key your form\'s widget uses. It is shown in the Developer guide examples.', 'submitdock' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="submitdock-secret"><?php esc_html_e( 'Secret key', 'submitdock' ); ?></label></th>
+						<td>
+							<input id="submitdock-secret" class="regular-text code" type="password" autocomplete="new-password" name="<?php echo esc_attr( self::name( 'captcha_secret' ) ); ?>" value="" placeholder="<?php echo esc_attr( '' !== $s['captcha_secret'] ? __( 'Saved. Enter a new key to replace it.', 'submitdock' ) : '' ); ?>" />
+							<?php if ( '' !== $s['captcha_secret'] ) : ?>
+								<label><input type="checkbox" name="<?php echo esc_attr( self::name( 'captcha_secret_clear' ) ); ?>" value="1" /> <?php esc_html_e( 'Remove the saved secret key', 'submitdock' ); ?></label>
+							<?php endif; ?>
+							<p class="description"><?php esc_html_e( 'From your Cloudflare, hCaptcha, or Google reCAPTCHA dashboard. It stays on your server.', 'submitdock' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="submitdock-score"><?php esc_html_e( 'reCAPTCHA v3 minimum score', 'submitdock' ); ?></label></th>
+						<td>
+							<input id="submitdock-score" class="small-text" type="number" min="0" max="1" step="0.1" name="<?php echo esc_attr( self::name( 'recaptcha_min_score' ) ); ?>" value="<?php echo esc_attr( (string) $s['recaptcha_min_score'] ); ?>" />
+							<p class="description"><?php esc_html_e( 'Only for reCAPTCHA v3. Scores go from 0.0 (likely a bot) to 1.0. Google suggests starting at 0.5.', 'submitdock' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Akismet', 'submitdock' ); ?></th>
+						<td>
+							<label><input type="checkbox" name="<?php echo esc_attr( self::name( 'akismet' ) ); ?>" value="1" <?php checked( $s['akismet'] ); ?> <?php disabled( ! SubmitDock_Settings::akismet_available() && ! $s['akismet'] ); ?> /> <?php esc_html_e( 'Check each submission with Akismet and move spam to the Spam folder', 'submitdock' ); ?></label>
+							<p class="description">
+								<?php
+								if ( SubmitDock_Settings::akismet_available() ) {
+									esc_html_e( 'Sends the message, the sender\'s name and email, IP address, and browser to Akismet. Spam is saved without an email, and the sender sees the normal success message.', 'submitdock' );
+								} else {
+									esc_html_e( 'Install and connect the Akismet Anti-spam plugin to use this.', 'submitdock' );
+								}
+								?>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="submitdock-retention"><?php esc_html_e( 'Keep spam for', 'submitdock' ); ?></label></th>
+						<td>
+							<input id="submitdock-retention" class="small-text" type="number" min="0" max="365" name="<?php echo esc_attr( self::name( 'spam_retention_days' ) ); ?>" value="<?php echo esc_attr( (string) $s['spam_retention_days'] ); ?>" /> <?php esc_html_e( 'days', 'submitdock' ); ?>
+							<p class="description"><?php esc_html_e( 'Spam older than this is deleted permanently once a day. Enter 0 to keep it.', 'submitdock' ); ?></p>
+						</td>
+					</tr>
 				</tbody></table>
 
 				<h2><?php esc_html_e( 'Privacy', 'submitdock' ); ?></h2>
@@ -246,8 +357,45 @@ final class SubmitDock_Admin {
 
 				<?php submit_button(); ?>
 			</form>
+
+			<?php self::render_api_key( $s ); ?>
 			<?php self::render_support(); ?>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Renders the API key section, a separate form so the key is never part of the settings form.
+	 *
+	 * @param array $s Settings.
+	 */
+	private static function render_api_key( array $s ) {
+		$new = get_transient( 'submitdock_new_key_' . get_current_user_id() );
+		if ( $new ) {
+			delete_transient( 'submitdock_new_key_' . get_current_user_id() );
+		}
+		?>
+		<h2 id="submitdock-api-key"><?php esc_html_e( 'API key for server-side submissions', 'submitdock' ); ?></h2>
+		<p><?php esc_html_e( 'Send the key in an X-SubmitDock-Key header from server-side code, such as a Next.js server action, an API route, or a mobile app backend. Requests with the key skip the allowed websites check, the spam check, and the rate limit, so never put the key in browser code.', 'submitdock' ); ?></p>
+		<?php if ( $new ) : ?>
+			<div class="notice notice-success inline"><p>
+				<?php esc_html_e( 'Your new API key. Copy it now: it is shown only once.', 'submitdock' ); ?><br />
+				<input type="text" readonly class="large-text code" value="<?php echo esc_attr( $new ); ?>" onfocus="this.select()" />
+			</p></div>
+		<?php endif; ?>
+		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+			<input type="hidden" name="action" value="submitdock_api_key" />
+			<?php wp_nonce_field( 'submitdock_api_key' ); ?>
+			<p>
+				<?php if ( '' !== $s['api_key_hash'] ) : ?>
+					<strong><?php esc_html_e( 'An API key is set.', 'submitdock' ); ?></strong>
+					<button type="submit" class="button" name="do" value="create"><?php esc_html_e( 'Replace key', 'submitdock' ); ?></button>
+					<button type="submit" class="button button-link-delete" name="do" value="revoke"><?php esc_html_e( 'Remove key', 'submitdock' ); ?></button>
+				<?php else : ?>
+					<button type="submit" class="button" name="do" value="create"><?php esc_html_e( 'Create API key', 'submitdock' ); ?></button>
+				<?php endif; ?>
+			</p>
+		</form>
 		<?php
 	}
 
@@ -291,7 +439,7 @@ final class SubmitDock_Admin {
 				<tr><th scope="row"><?php esc_html_e( 'Named form', 'submitdock' ); ?></th><td><code><?php echo esc_html( $named ); ?></code> <?php esc_html_e( 'Use lowercase letters, numbers, hyphens, and underscores. Filter submissions by form name.', 'submitdock' ); ?></td></tr>
 				<tr><th scope="row"><?php esc_html_e( 'Method', 'submitdock' ); ?></th><td><code>POST</code></td></tr>
 				<tr><th scope="row"><?php esc_html_e( 'Body', 'submitdock' ); ?></th><td><?php esc_html_e( 'A JSON object, or a regular form post (application/x-www-form-urlencoded or multipart/form-data). Files are not accepted.', 'submitdock' ); ?></td></tr>
-				<tr><th scope="row"><?php esc_html_e( 'Authentication', 'submitdock' ); ?></th><td><?php esc_html_e( 'None. It is a public endpoint; restrict it to your websites under Settings.', 'submitdock' ); ?></td></tr>
+				<tr><th scope="row"><?php esc_html_e( 'Authentication', 'submitdock' ); ?></th><td><?php esc_html_e( 'None for browsers: it is a public endpoint, restricted to your websites under Settings. Server-side code can send an API key in the X-SubmitDock-Key header.', 'submitdock' ); ?></td></tr>
 			</tbody></table>
 
 			<h2><?php esc_html_e( 'JavaScript (any framework)', 'submitdock' ); ?></h2>
@@ -348,7 +496,34 @@ final class SubmitDock_Admin {
 			);
 			?>
 
+			<h2><?php esc_html_e( 'Spam check (CAPTCHA)', 'submitdock' ); ?></h2>
+			<?php
+			$providers = SubmitDock_Settings::captcha_providers();
+			$provider  = isset( $providers[ $s['captcha_provider'] ] ) ? $s['captcha_provider'] : 'turnstile';
+			$site_key  = '' !== $s['captcha_site_key'] ? $s['captcha_site_key'] : 'YOUR_SITE_KEY';
+			$widgets   = array(
+				'turnstile' => array( '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>', '<div class="cf-turnstile" data-sitekey="' . $site_key . '"></div>' ), // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript, PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Example code shown as text in the guide, escaped on output; the plugin loads no remote script.
+				'hcaptcha'  => array( '<script src="https://js.hcaptcha.com/1/api.js" async defer></script>', '<div class="h-captcha" data-sitekey="' . $site_key . '"></div>' ), // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript, PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Example code shown as text in the guide, escaped on output; the plugin loads no remote script.
+				'recaptcha' => array( '<script src="https://www.google.com/recaptcha/api.js" async defer></script>', '<div class="g-recaptcha" data-sitekey="' . $site_key . '"></div>' ), // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript, PluginCheck.CodeAnalysis.Offloading.OffloadedContent -- Example code shown as text in the guide, escaped on output; the plugin loads no remote script.
+			);
+			?>
+			<p>
+				<?php
+				printf(
+					/* translators: 1: service name, 2: field name. */
+					esc_html__( 'Choose a service under Settings, then add its widget inside your form. The widget adds a %2$s field, which SubmitDock checks with %1$s before saving. From JavaScript, send the token in that field or in __captcha.', 'submitdock' ),
+					esc_html( $providers[ $provider ]['label'] ),
+					'<code>' . esc_html( $providers[ $provider ]['field'] ) . '</code>'
+				);
+				?>
+			</p>
+			<?php self::code( 'HTML', $widgets[ $provider ][0] . "\n\n<!-- " . __( 'Inside your form:', 'submitdock' ) . " -->\n" . $widgets[ $provider ][1] ); ?>
+			<?php if ( '' === $s['captcha_provider'] ) : ?>
+				<p class="description"><?php esc_html_e( 'No spam check service is selected yet, so this example uses Cloudflare Turnstile.', 'submitdock' ); ?></p>
+			<?php endif; ?>
+
 			<h2><?php esc_html_e( 'From a server', 'submitdock' ); ?></h2>
+			<p><?php esc_html_e( 'Server-side code sends no Origin header, so create an API key under Settings and send it in the X-SubmitDock-Key header. Keyed requests skip the allowed websites check, the spam check and the rate limit. Pass your visitor\'s IP address and browser in __context so they are saved and used by Akismet.', 'submitdock' ); ?></p>
 			<?php
 			self::code(
 				'cURL',
@@ -357,18 +532,47 @@ final class SubmitDock_Admin {
 					array(
 						'curl -X POST \'' . $endpoint . '\' \\',
 						'  -H \'Content-Type: application/json\' \\',
+						'  -H \'X-SubmitDock-Key: YOUR_API_KEY\' \\',
 						'  -d \'{"name": "Alex", "email": "alex@example.com", "message": "Hello"}\'',
 					)
 				)
 			);
+			self::code(
+				'Next.js server action',
+				implode(
+					"\n",
+					array(
+						'"use server";',
+						'import { headers } from "next/headers";',
+						'',
+						'export async function sendContact(formData) {',
+						'  const h = await headers();',
+						'  const response = await fetch("' . $endpoint . '", {',
+						'    method: "POST",',
+						'    headers: {',
+						'      "Content-Type": "application/json",',
+						'      "X-SubmitDock-Key": process.env.SUBMITDOCK_KEY, // keep it in an environment variable',
+						'    },',
+						'    body: JSON.stringify({',
+						'      ...Object.fromEntries(formData),',
+						'      __context: {',
+						'        ip_address: h.get("x-forwarded-for")?.split(",")[0].trim(),',
+						'        user_agent: h.get("user-agent"),',
+						'      },',
+						'    }),',
+						'  });',
+						'  return response.json();',
+						'}',
+					)
+				)
+			);
 			?>
-			<p><?php esc_html_e( 'Server requests send no Origin header, so they are refused when the allowed websites list is not empty.', 'submitdock' ); ?></p>
 
 			<h2><?php esc_html_e( 'Responses', 'submitdock' ); ?></h2>
 			<table class="widefat striped submitdock-guide__table"><tbody>
 				<tr><th scope="row"><code>200</code></th><td><?php esc_html_e( 'Saved and emailed.', 'submitdock' ); ?> <code>{"success": true, "message": "…", "email_status": "sent"}</code></td></tr>
 				<tr><th scope="row"><code>202</code></th><td><?php esc_html_e( 'Saved, but the email could not be sent. Treat it as success.', 'submitdock' ); ?></td></tr>
-				<tr><th scope="row"><code>400</code></th><td><?php esc_html_e( 'Invalid data, or the spam trap was filled in.', 'submitdock' ); ?></td></tr>
+				<tr><th scope="row"><code>400</code></th><td><?php esc_html_e( 'Invalid data, the spam trap was filled in, or the spam check (CAPTCHA) failed.', 'submitdock' ); ?></td></tr>
 				<tr><th scope="row"><code>403</code></th><td><?php esc_html_e( 'The website is not in the allowed list.', 'submitdock' ); ?></td></tr>
 				<tr><th scope="row"><code>429</code></th><td><?php esc_html_e( 'Rate limit reached.', 'submitdock' ); ?></td></tr>
 			</tbody></table>
@@ -389,6 +593,7 @@ final class SubmitDock_Admin {
 				<li><code>submitdock_submission_saved</code> — <?php esc_html_e( 'action after saving, for webhooks, CRMs, or Slack.', 'submitdock' ); ?></li>
 				<li><code>submitdock_email</code> — <?php esc_html_e( 'filter the notification email.', 'submitdock' ); ?></li>
 				<li><code>submitdock_client_ip</code> — <?php esc_html_e( 'filter the visitor IP address, for sites behind a proxy or CDN.', 'submitdock' ); ?></li>
+				<li><code>submitdock_submission_spam</code> — <?php esc_html_e( 'action when a submission is saved to the Spam folder.', 'submitdock' ); ?></li>
 			</ul>
 			<?php self::render_support(); ?>
 		</div>

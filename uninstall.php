@@ -9,12 +9,13 @@
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 delete_option( 'submitdock_settings' );
+wp_clear_scheduled_hook( 'submitdock_purge_spam' );
 
 if ( defined( 'SUBMITDOCK_DELETE_DATA' ) && SUBMITDOCK_DELETE_DATA ) {
 	$submitdock_ids = get_posts(
 		array(
 			'post_type'      => 'submitdock_entry',
-			'post_status'    => 'any',
+			'post_status'    => array( 'private', 'publish', 'draft', 'trash', 'submitdock_spam' ),
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
 		)
