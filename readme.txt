@@ -1,15 +1,15 @@
 === SubmitDock – Headless Form Backend ===
 Contributors: imalinawaz
 Donate link: https://www.buymeacoffee.com/bealinawaz
-Tags: headless, form backend, contact form, rest api, form submissions
+Tags: headless, form backend, rest api, form submissions, nextjs
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Headless form backend for Next.js, React, and static sites: receive form submissions via REST API, saved in WordPress and emailed to you.
+Headless form backend for Next.js, React and static sites. Any fields via REST API, saved in WordPress and emailed, with CAPTCHA and Akismet.
 
 == Description ==
 
@@ -39,9 +39,20 @@ There is no form builder to set up. You build the form however you like, and the
 
 Responses are JSON with a `message` ready to show your visitors. Status 200 means saved and emailed, and 202 means saved but the email failed.
 
+**SubmitDock Pro**
+
+SubmitDock Pro is a separate add-on for forms that need more than fields and an email. The free plugin keeps every feature above, and Pro adds, on the same endpoint:
+
+* **File uploads:** send `multipart/form-data` to `/submit/{form}`. Each form has its own allowed file types, size limit (1 to 100 MB) and number of files (1 to 20). PHP, scripts, HTML, SVG and executables are always refused, and each file's content is checked against its type. Files are stored privately under random names, can be downloaded from the submission screen by users who can edit it, can be attached to the notification email, and are deleted with their submission.
+* **Webhooks:** send each submission as JSON to any URL, for all forms or chosen ones, signed with HMAC-SHA256 so your receiver can check it came from your site. Failed deliveries are retried after 1 minute, 5 minutes, 30 minutes and 2 hours, and a delivery log shows the status, HTTP code and response of every attempt, with a Resend button.
+* **Google Sheets:** add one row per submission to the sheet and tab you choose, through a Google Cloud service account, with the same retries and log. Send a test row from the Google Sheets tab after setting it up.
+* **Email templates and auto-replies:** a subject and message per form with merge tags, in plain text or an HTML layout, and an auto-reply to the sender that is sent only after a passed CAPTCHA check, at most three times an hour per address.
+
+Submissions in the Spam folder are never sent to webhooks or Google Sheets and get no auto-reply. SubmitDock Pro costs from $29 a year, with a 14-day refund policy. [See SubmitDock Pro](https://bealinawaz.com/wordpress-plugins/pro/submitdock/?utm_source=wordpress.org&utm_medium=plugin-readme&utm_campaign=submitdock).
+
 **Custom development**
 
-Need a webhook to your CRM, file uploads, a multi-step form, or a full headless WordPress build? The plugin is built and maintained by Ali Nawaz, a WordPress and full stack developer. [Get in touch for custom work](https://bealinawaz.com/contact-me/?utm_source=wordpress.org&utm_medium=plugin-readme&utm_campaign=submitdock).
+Need a ready-made connection to your CRM, a multi-step form, or a full headless WordPress build? The plugin is built and maintained by Ali Nawaz, a WordPress and full stack developer. [Get in touch for custom work](https://bealinawaz.com/contact-me/?utm_source=wordpress.org&utm_medium=plugin-readme&utm_campaign=submitdock).
 
 == External services ==
 
@@ -117,7 +128,11 @@ Server-side code, such as a Next.js server action, has no Origin header and no C
 
 = Can it accept file uploads? =
 
-Not in this version. Text, numbers, true/false values, lists, and nested objects are supported.
+Not in the free plugin, which saves text, numbers, true/false values, lists, and nested objects. A multipart request still works, but its files are ignored. SubmitDock Pro accepts files on the same endpoint, with allowed types, size and count limits per form, content checks and private storage.
+
+= Can I send submissions to a webhook without code? =
+
+With the free plugin, use the `submitdock_submission_saved` action in your own code. SubmitDock Pro adds signed webhooks with automatic retries and a delivery log, set up in the dashboard.
 
 = My site is behind Cloudflare or a proxy. Which IP is saved? =
 
@@ -130,6 +145,10 @@ The connecting IP address. Use the `submitdock_client_ip` filter to read the vis
 = Are submissions deleted when I uninstall? =
 
 No, only the settings are removed, so messages are never lost by accident. To delete submissions too, define `SUBMITDOCK_DELETE_DATA` as true in wp-config.php before uninstalling.
+
+= What does SubmitDock Pro add? =
+
+File uploads with per-form type, size and count limits and private storage, signed webhooks with automatic retries and a delivery log, Google Sheets rows, and per-form email templates with auto-replies. It is a separate add-on that needs this free plugin, and your front end keeps using the same endpoint. See [SubmitDock Pro](https://bealinawaz.com/wordpress-plugins/pro/submitdock/?utm_source=wordpress.org&utm_medium=plugin-readme&utm_campaign=submitdock).
 
 = Is the plugin available in my language? =
 
@@ -145,6 +164,10 @@ The plugin is ready for translation, and translations are made by volunteers on 
 6. The Spam folder, with Not spam actions to move a submission back to the inbox.
 
 == Changelog ==
+
+= 1.2.2 (2026-11-19) =
+* The Settings screen and the plugin's row on the Plugins screen mention the SubmitDock Pro add-on. Both are hidden when Pro is active.
+* Readme: SubmitDock Pro section, new questions on webhooks and Pro, updated answer on file uploads.
 
 = 1.2.1 (2026-11-15) =
 * Translations: the "Next.js server action" label in the developer guide is now translatable, and a translation template (languages/submitdock.pot) is included.
@@ -173,6 +196,9 @@ The plugin is ready for translation, and translations are made by volunteers on 
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.2.2 =
+Settings text and SubmitDock Pro information. Nothing to change.
 
 = 1.2.1 =
 Translation and right-to-left language improvements. Nothing to change.

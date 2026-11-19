@@ -42,7 +42,8 @@
 	font: inherit;
 }
 
-.submitdock-support {
+.submitdock-support,
+.submitdock-pro {
 	max-width: 960px;
 	margin: 32px 0 0;
 	padding: 4px 20px 12px;

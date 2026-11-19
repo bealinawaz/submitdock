@@ -17,6 +17,7 @@ final class SubmitDock_Admin {
 	const AUTHOR_URL    = 'https://bealinawaz.com/';
 	const CONTACT_URL   = 'https://bealinawaz.com/contact-me/';
 	const DONATE_URL    = 'https://www.buymeacoffee.com/bealinawaz';
+	const PRO_URL       = 'https://bealinawaz.com/wordpress-plugins/pro/submitdock/';
 
 	/**
 	 * Registers hooks.
@@ -92,9 +93,41 @@ final class SubmitDock_Admin {
 		if ( plugin_basename( SUBMITDOCK_FILE ) !== $file ) {
 			return $links;
 		}
+		if ( ! self::pro_active() ) {
+			$links[] = '<a href="' . esc_url( self::PRO_URL ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'SubmitDock Pro', 'submitdock' ) . '</a>';
+		}
 		$links[] = '<a href="' . esc_url( self::CONTACT_URL ) . '" target="_blank" rel="noopener">' . esc_html__( 'Custom development', 'submitdock' ) . '</a>';
 		$links[] = '<a href="' . esc_url( self::DONATE_URL ) . '" target="_blank" rel="noopener">' . esc_html__( 'Buy me a coffee', 'submitdock' ) . '</a>';
 		return $links;
+	}
+
+	/**
+	 * Whether the SubmitDock Pro add-on is active. Checked when rendering, because Pro loads after the free plugin.
+	 *
+	 * @return bool
+	 */
+	public static function pro_active() {
+		return defined( 'SUBMITDOCK_PRO_VERSION' );
+	}
+
+	/**
+	 * One short note about the Pro add-on on the Settings screen, only while Pro isn't active.
+	 */
+	private static function render_pro_box() {
+		if ( self::pro_active() ) {
+			return;
+		}
+		?>
+		<div class="submitdock-pro">
+			<h2><?php esc_html_e( 'Need more? SubmitDock Pro', 'submitdock' ); ?></h2>
+			<ul class="ul-disc">
+				<li><?php esc_html_e( 'File uploads on the same endpoint, with allowed types, size and count limits per form, content checks and private storage.', 'submitdock' ); ?></li>
+				<li><?php esc_html_e( 'Signed webhooks to any URL, retried automatically and listed in a delivery log with a Resend button.', 'submitdock' ); ?></li>
+				<li><?php esc_html_e( 'Per-form notification emails and auto-replies, in plain text or an HTML layout.', 'submitdock' ); ?></li>
+			</ul>
+			<p><a class="button" href="<?php echo esc_url( self::PRO_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'See SubmitDock Pro', 'submitdock' ); ?></a></p>
+		</div>
+		<?php
 	}
 
 	/**
@@ -108,7 +141,7 @@ final class SubmitDock_Admin {
 				<?php
 				printf(
 					/* translators: %s: link to the author's website. */
-					esc_html__( 'SubmitDock is free and built by Ali Nawaz, a WordPress and full stack developer at %s. I can add file uploads, CRM, Slack, or webhook integrations, multi-step forms, or build your complete headless WordPress website.', 'submitdock' ),
+					esc_html__( 'SubmitDock is free and built by Ali Nawaz, a WordPress and full stack developer at %s. I can build a ready-made CRM connection, multi-step forms, or your complete headless WordPress website.', 'submitdock' ),
 					'<a href="' . esc_url( self::AUTHOR_URL ) . '" target="_blank" rel="noopener">bealinawaz.com</a>'
 				);
 				?>
@@ -359,6 +392,7 @@ final class SubmitDock_Admin {
 			</form>
 
 			<?php self::render_api_key( $s ); ?>
+			<?php self::render_pro_box(); ?>
 			<?php self::render_support(); ?>
 		</div>
 		<?php
