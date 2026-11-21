@@ -62,6 +62,55 @@ final class SubmitDock_Settings {
 	}
 
 	/**
+	 * Most notification recipients accepted in Send to.
+	 */
+	const MAX_RECIPIENTS = 10;
+
+	/**
+	 * Splits a Send to value into unique, valid email addresses.
+	 *
+	 * Addresses can be separated by commas, semicolons, or new lines.
+	 *
+	 * @param string $value Raw value.
+	 * @return string[]|WP_Error Addresses, or an error naming the first invalid one.
+	 */
+	public static function parse_recipients( $value ) {
+		$addresses = array();
+		foreach ( preg_split( '/[,;\s]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY ) as $part ) {
+			$email = sanitize_email( $part );
+			if ( '' === $email || ! is_email( $email ) ) {
+				return new WP_Error(
+					'submitdock_recipient',
+					/* translators: %s: the email address that is not valid. */
+					sprintf( __( '"%s" is not a valid email address. Separate several addresses with commas.', 'submitdock' ), $part )
+				);
+			}
+			$key = strtolower( $email );
+			if ( ! isset( $addresses[ $key ] ) ) {
+				$addresses[ $key ] = $email;
+			}
+		}
+		if ( empty( $addresses ) ) {
+			return new WP_Error( 'submitdock_recipient', __( 'Enter at least one email address to send notifications to.', 'submitdock' ) );
+		}
+		if ( count( $addresses ) > self::MAX_RECIPIENTS ) {
+			/* translators: %d: maximum number of addresses. */
+			return new WP_Error( 'submitdock_recipient', sprintf( __( 'Enter up to %d email addresses.', 'submitdock' ), self::MAX_RECIPIENTS ) );
+		}
+		return array_values( $addresses );
+	}
+
+	/**
+	 * Notification recipients from the saved settings.
+	 *
+	 * @return string[]
+	 */
+	public static function recipients() {
+		$recipients = self::parse_recipients( self::get()['recipient'] );
+		return is_wp_error( $recipients ) ? array() : $recipients;
+	}
+
+	/**
 	 * Default settings.
 	 *
 	 * @return array
@@ -156,11 +205,11 @@ final class SubmitDock_Settings {
 		}
 		$output = $current;
 
-		$recipient = isset( $input['recipient'] ) ? sanitize_email( (string) $input['recipient'] ) : '';
-		if ( is_email( $recipient ) ) {
-			$output['recipient'] = $recipient;
+		$recipients = self::parse_recipients( isset( $input['recipient'] ) ? (string) $input['recipient'] : '' );
+		if ( is_wp_error( $recipients ) ) {
+			self::error( 'recipient', $recipients->get_error_message() );
 		} else {
-			self::error( 'recipient', __( 'Enter a valid notification email address.', 'submitdock' ) );
+			$output['recipient'] = implode( ', ', $recipients );
 		}
 
 		$output['email_notifications'] = ! empty( $input['email_notifications'] );

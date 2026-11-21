@@ -247,19 +247,30 @@ final class SubmitDock_Admin {
 					</tr>
 					<tr>
 						<th scope="row"><label for="submitdock-recipient"><?php esc_html_e( 'Send to', 'submitdock' ); ?></label></th>
-						<td><input id="submitdock-recipient" class="regular-text" type="email" name="<?php echo esc_attr( self::name( 'recipient' ) ); ?>" value="<?php echo esc_attr( $s['recipient'] ); ?>" required /></td>
+						<td>
+							<input id="submitdock-recipient" class="regular-text" type="email" multiple name="<?php echo esc_attr( self::name( 'recipient' ) ); ?>" value="<?php echo esc_attr( $s['recipient'] ); ?>" placeholder="<?php echo esc_attr__( 'you@example.com, team@example.com', 'submitdock' ); ?>" required />
+							<p class="description">
+								<?php
+								printf(
+									/* translators: %d: maximum number of addresses. */
+									esc_html__( 'One or more email addresses, separated by commas (up to %d). Every address gets each notification.', 'submitdock' ),
+									(int) SubmitDock_Settings::MAX_RECIPIENTS
+								);
+								?>
+							</p>
+						</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="submitdock-subject"><?php esc_html_e( 'Subject', 'submitdock' ); ?></label></th>
 						<td>
-							<input id="submitdock-subject" class="regular-text" type="text" name="<?php echo esc_attr( self::name( 'email_subject' ) ); ?>" value="<?php echo esc_attr( $s['email_subject'] ); ?>" required />
+							<input id="submitdock-subject" class="regular-text" type="text" name="<?php echo esc_attr( self::name( 'email_subject' ) ); ?>" value="<?php echo esc_attr( $s['email_subject'] ); ?>" placeholder="<?php echo esc_attr( SubmitDock_Settings::defaults()['email_subject'] ); ?>" required />
 							<p class="description"><?php esc_html_e( 'Named forms add their name in brackets, for example [newsletter].', 'submitdock' ); ?></p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="submitdock-reply"><?php esc_html_e( 'Reply-to field', 'submitdock' ); ?></label></th>
 						<td>
-							<input id="submitdock-reply" class="regular-text code" type="text" name="<?php echo esc_attr( self::name( 'reply_to_field' ) ); ?>" value="<?php echo esc_attr( $s['reply_to_field'] ); ?>" />
+							<input id="submitdock-reply" class="regular-text code" type="text" name="<?php echo esc_attr( self::name( 'reply_to_field' ) ); ?>" value="<?php echo esc_attr( $s['reply_to_field'] ); ?>" placeholder="email" />
 							<p class="description"><?php esc_html_e( 'The field that holds the sender\'s email address. Replying to a notification replies to the sender, and privacy requests find submissions by this address.', 'submitdock' ); ?></p>
 						</td>
 					</tr>
@@ -270,14 +281,14 @@ final class SubmitDock_Admin {
 					<tr>
 						<th scope="row"><label for="submitdock-origins"><?php esc_html_e( 'Allowed websites', 'submitdock' ); ?></label></th>
 						<td>
-							<textarea id="submitdock-origins" class="large-text code" rows="4" name="<?php echo esc_attr( self::name( 'allowed_origins' ) ); ?>" placeholder="https://example.com"><?php echo esc_textarea( implode( "\n", $s['allowed_origins'] ) ); ?></textarea>
+							<textarea id="submitdock-origins" class="large-text code" rows="4" name="<?php echo esc_attr( self::name( 'allowed_origins' ) ); ?>" placeholder="<?php echo esc_attr( "https://example.com\nhttps://www.example.com" ); ?>"><?php echo esc_textarea( implode( "\n", $s['allowed_origins'] ) ); ?></textarea>
 							<p class="description"><?php esc_html_e( 'One origin per line, such as https://example.com. Browsers on other websites are refused. Leave empty to accept submissions from any website.', 'submitdock' ); ?></p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="submitdock-honeypot"><?php esc_html_e( 'Spam trap field', 'submitdock' ); ?></label></th>
 						<td>
-							<input id="submitdock-honeypot" class="regular-text code" type="text" name="<?php echo esc_attr( self::name( 'honeypot_field' ) ); ?>" value="<?php echo esc_attr( $s['honeypot_field'] ); ?>" />
+							<input id="submitdock-honeypot" class="regular-text code" type="text" name="<?php echo esc_attr( self::name( 'honeypot_field' ) ); ?>" value="<?php echo esc_attr( $s['honeypot_field'] ); ?>" placeholder="_gotcha" />
 							<p class="description"><?php esc_html_e( 'Add a hidden field with this name to your form. People leave it empty; bots fill it in, and those submissions are rejected.', 'submitdock' ); ?></p>
 						</td>
 					</tr>
@@ -309,14 +320,14 @@ final class SubmitDock_Admin {
 					<tr>
 						<th scope="row"><label for="submitdock-site-key"><?php esc_html_e( 'Site key', 'submitdock' ); ?></label></th>
 						<td>
-							<input id="submitdock-site-key" class="regular-text code" type="text" autocomplete="off" name="<?php echo esc_attr( self::name( 'captcha_site_key' ) ); ?>" value="<?php echo esc_attr( $s['captcha_site_key'] ); ?>" />
+							<input id="submitdock-site-key" class="regular-text code" type="text" autocomplete="off" name="<?php echo esc_attr( self::name( 'captcha_site_key' ) ); ?>" value="<?php echo esc_attr( $s['captcha_site_key'] ); ?>" placeholder="<?php esc_attr_e( 'Paste the site key from your CAPTCHA dashboard', 'submitdock' ); ?>" />
 							<p class="description"><?php esc_html_e( 'The public key your form\'s widget uses. It is shown in the Developer guide examples.', 'submitdock' ); ?></p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="submitdock-secret"><?php esc_html_e( 'Secret key', 'submitdock' ); ?></label></th>
 						<td>
-							<input id="submitdock-secret" class="regular-text code" type="password" autocomplete="new-password" name="<?php echo esc_attr( self::name( 'captcha_secret' ) ); ?>" value="" placeholder="<?php echo esc_attr( '' !== $s['captcha_secret'] ? __( 'Saved. Enter a new key to replace it.', 'submitdock' ) : '' ); ?>" />
+							<input id="submitdock-secret" class="regular-text code" type="password" autocomplete="new-password" name="<?php echo esc_attr( self::name( 'captcha_secret' ) ); ?>" value="" placeholder="<?php echo esc_attr( '' !== $s['captcha_secret'] ? __( 'Saved. Enter a new key to replace it.', 'submitdock' ) : __( 'Paste the secret key from your CAPTCHA dashboard', 'submitdock' ) ); ?>" />
 							<?php if ( '' !== $s['captcha_secret'] ) : ?>
 								<label><input type="checkbox" name="<?php echo esc_attr( self::name( 'captcha_secret_clear' ) ); ?>" value="1" /> <?php esc_html_e( 'Remove the saved secret key', 'submitdock' ); ?></label>
 							<?php endif; ?>
@@ -383,7 +394,7 @@ final class SubmitDock_Admin {
 					<?php foreach ( SubmitDock_Settings::message_labels() as $key => $label ) : ?>
 						<tr>
 							<th scope="row"><label for="submitdock-<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label></th>
-							<td><textarea id="submitdock-<?php echo esc_attr( $key ); ?>" class="large-text" rows="2" name="<?php echo esc_attr( self::name( $key ) ); ?>"><?php echo esc_textarea( $s[ $key ] ); ?></textarea></td>
+							<td><textarea id="submitdock-<?php echo esc_attr( $key ); ?>" class="large-text" rows="2" name="<?php echo esc_attr( self::name( $key ) ); ?>" placeholder="<?php echo esc_attr( SubmitDock_Settings::defaults()[ $key ] ); ?>"><?php echo esc_textarea( $s[ $key ] ); ?></textarea></td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody></table>
