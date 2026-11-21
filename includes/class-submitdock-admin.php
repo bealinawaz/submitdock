@@ -320,14 +320,14 @@ final class SubmitDock_Admin {
 					<tr>
 						<th scope="row"><label for="submitdock-site-key"><?php esc_html_e( 'Site key', 'submitdock' ); ?></label></th>
 						<td>
-							<input id="submitdock-site-key" class="regular-text code" type="text" autocomplete="off" name="<?php echo esc_attr( self::name( 'captcha_site_key' ) ); ?>" value="<?php echo esc_attr( $s['captcha_site_key'] ); ?>" placeholder="<?php esc_attr_e( 'Paste the site key from your CAPTCHA dashboard', 'submitdock' ); ?>" />
+							<input id="submitdock-site-key" class="regular-text code" type="text" autocomplete="off" name="<?php echo esc_attr( self::name( 'captcha_site_key' ) ); ?>" value="<?php echo esc_attr( $s['captcha_site_key'] ); ?>" placeholder="<?php esc_attr_e( 'Your site key', 'submitdock' ); ?>" />
 							<p class="description"><?php esc_html_e( 'The public key your form\'s widget uses. It is shown in the Developer guide examples.', 'submitdock' ); ?></p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="submitdock-secret"><?php esc_html_e( 'Secret key', 'submitdock' ); ?></label></th>
 						<td>
-							<input id="submitdock-secret" class="regular-text code" type="password" autocomplete="new-password" name="<?php echo esc_attr( self::name( 'captcha_secret' ) ); ?>" value="" placeholder="<?php echo esc_attr( '' !== $s['captcha_secret'] ? __( 'Saved. Enter a new key to replace it.', 'submitdock' ) : __( 'Paste the secret key from your CAPTCHA dashboard', 'submitdock' ) ); ?>" />
+							<input id="submitdock-secret" class="regular-text code" type="password" autocomplete="new-password" name="<?php echo esc_attr( self::name( 'captcha_secret' ) ); ?>" value="" placeholder="<?php echo esc_attr( '' !== $s['captcha_secret'] ? __( 'Saved. Enter a new key to replace it.', 'submitdock' ) : __( 'Your secret key', 'submitdock' ) ); ?>" />
 							<?php if ( '' !== $s['captcha_secret'] ) : ?>
 								<label><input type="checkbox" name="<?php echo esc_attr( self::name( 'captcha_secret_clear' ) ); ?>" value="1" /> <?php esc_html_e( 'Remove the saved secret key', 'submitdock' ); ?></label>
 							<?php endif; ?>

@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: SubmitDock – Headless Form Backend 1.2.2\n"
+"Project-Id-Version: SubmitDock – Headless Form Backend 1.2.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/submitdock\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-19T06:30:59+00:00\n"
+"POT-Creation-Date: 2026-11-21T18:42:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: submitdock\n"
@@ -153,353 +153,371 @@ msgstr ""
 msgid "Send to"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:253
+#: includes/class-submitdock-admin.php:251
+msgid "you@example.com, team@example.com"
+msgstr ""
+
+#. translators: %d: maximum number of addresses.
+#: includes/class-submitdock-admin.php:256
+#, php-format
+msgid "One or more email addresses, separated by commas (up to %d). Every address gets each notification."
+msgstr ""
+
+#: includes/class-submitdock-admin.php:264
 msgid "Subject"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:256
+#: includes/class-submitdock-admin.php:267
 msgid "Named forms add their name in brackets, for example [newsletter]."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:260
+#: includes/class-submitdock-admin.php:271
 msgid "Reply-to field"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:263
+#: includes/class-submitdock-admin.php:274
 msgid "The field that holds the sender's email address. Replying to a notification replies to the sender, and privacy requests find submissions by this address."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:268
+#: includes/class-submitdock-admin.php:279
 msgid "Security"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:271
+#: includes/class-submitdock-admin.php:282
 msgid "Allowed websites"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:274
+#: includes/class-submitdock-admin.php:285
 msgid "One origin per line, such as https://example.com. Browsers on other websites are refused. Leave empty to accept submissions from any website."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:278
+#: includes/class-submitdock-admin.php:289
 msgid "Spam trap field"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:281
+#: includes/class-submitdock-admin.php:292
 msgid "Add a hidden field with this name to your form. People leave it empty; bots fill it in, and those submissions are rejected."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:285
+#: includes/class-submitdock-admin.php:296
 msgid "Rate limit"
 msgstr ""
 
 #. translators: 1: number input, 2: minutes input.
-#: includes/class-submitdock-admin.php:290
+#: includes/class-submitdock-admin.php:301
 #, php-format
 msgid "%1$s submissions per visitor every %2$s minutes"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:291
+#: includes/class-submitdock-admin.php:302
 #: includes/class-submitdock-submissions.php:49
 msgid "Submissions"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:292
+#: includes/class-submitdock-admin.php:303
 msgid "Minutes"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:298
-#: includes/class-submitdock-admin.php:533
+#: includes/class-submitdock-admin.php:309
+#: includes/class-submitdock-admin.php:544
 msgid "Spam check (CAPTCHA)"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:301
+#: includes/class-submitdock-admin.php:312
 msgid "None"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:306
+#: includes/class-submitdock-admin.php:317
 msgid "Add the service's widget to your form, and SubmitDock checks its token with the service before saving. Submissions that fail the check are refused. The token is never saved."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:310
+#: includes/class-submitdock-admin.php:321
 msgid "Site key"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:313
+#: includes/class-submitdock-admin.php:323
+msgid "Your site key"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:324
 msgid "The public key your form's widget uses. It is shown in the Developer guide examples."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:317
+#: includes/class-submitdock-admin.php:328
 msgid "Secret key"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:319
+#: includes/class-submitdock-admin.php:330
 msgid "Saved. Enter a new key to replace it."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:321
+#: includes/class-submitdock-admin.php:330
+msgid "Your secret key"
+msgstr ""
+
+#: includes/class-submitdock-admin.php:332
 msgid "Remove the saved secret key"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:323
+#: includes/class-submitdock-admin.php:334
 msgid "From your Cloudflare, hCaptcha, or Google reCAPTCHA dashboard. It stays on your server."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:327
+#: includes/class-submitdock-admin.php:338
 msgid "reCAPTCHA v3 minimum score"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:330
+#: includes/class-submitdock-admin.php:341
 msgid "Only for reCAPTCHA v3. Scores go from 0.0 (likely a bot) to 1.0. Google suggests starting at 0.5."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:334
+#: includes/class-submitdock-admin.php:345
 msgid "Akismet"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:336
+#: includes/class-submitdock-admin.php:347
 msgid "Check each submission with Akismet and move spam to the Spam folder"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:340
+#: includes/class-submitdock-admin.php:351
 msgid "Sends the message, the sender's name and email, IP address, and browser to Akismet. Spam is saved without an email, and the sender sees the normal success message."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:342
+#: includes/class-submitdock-admin.php:353
 msgid "Install and connect the Akismet Anti-spam plugin to use this."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:349
+#: includes/class-submitdock-admin.php:360
 msgid "Keep spam for"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:351
+#: includes/class-submitdock-admin.php:362
 msgid "days"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:352
+#: includes/class-submitdock-admin.php:363
 msgid "Spam older than this is deleted permanently once a day. Enter 0 to keep it."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:357
+#: includes/class-submitdock-admin.php:368
 msgid "Privacy"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:360
+#: includes/class-submitdock-admin.php:371
 #: includes/class-submitdock-submissions.php:407
 msgid "IP address"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:361
+#: includes/class-submitdock-admin.php:372
 msgid "Save the visitor's IP address with each submission"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:364
+#: includes/class-submitdock-admin.php:375
 msgid "Location"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:366
+#: includes/class-submitdock-admin.php:377
 msgid "Look up the approximate city and country"
 msgstr ""
 
 #. translators: %s: link to ipwho.is.
-#: includes/class-submitdock-admin.php:371
+#: includes/class-submitdock-admin.php:382
 #, php-format
 msgid "Sends the visitor's IP address to %s. Requires saving IP addresses. Mention this in your privacy policy."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:380
+#: includes/class-submitdock-admin.php:391
 msgid "Messages"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:381
+#: includes/class-submitdock-admin.php:392
 msgid "Returned in the message field of each response, ready to show to visitors."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:412
+#: includes/class-submitdock-admin.php:423
 msgid "API key for server-side submissions"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:413
+#: includes/class-submitdock-admin.php:424
 msgid "Send the key in an X-SubmitDock-Key header from server-side code, such as a Next.js server action, an API route, or a mobile app backend. Requests with the key skip the allowed websites check, the spam check, and the rate limit, so never put the key in browser code."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:416
+#: includes/class-submitdock-admin.php:427
 msgid "Your new API key. Copy it now: it is shown only once."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:425
+#: includes/class-submitdock-admin.php:436
 msgid "An API key is set."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:426
+#: includes/class-submitdock-admin.php:437
 msgid "Replace key"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:427
+#: includes/class-submitdock-admin.php:438
 msgid "Remove key"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:429
+#: includes/class-submitdock-admin.php:440
 msgid "Create API key"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:447
+#: includes/class-submitdock-admin.php:458
 #: assets/admin.js:15
 msgid "Copy"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:468
+#: includes/class-submitdock-admin.php:479
 msgid "Connect a form"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:469
+#: includes/class-submitdock-admin.php:480
 msgid "Send any form to WordPress from a static site, React, Next.js, Vue, a mobile app, or a server. Every field you send is saved and emailed, with no form builder to set up."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:472
+#: includes/class-submitdock-admin.php:483
 msgid "Endpoint"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:473
+#: includes/class-submitdock-admin.php:484
 msgid "Named form"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:473
+#: includes/class-submitdock-admin.php:484
 msgid "Use lowercase letters, numbers, hyphens, and underscores. Filter submissions by form name."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:474
+#: includes/class-submitdock-admin.php:485
 msgid "Method"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:475
+#: includes/class-submitdock-admin.php:486
 msgid "Body"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:475
+#: includes/class-submitdock-admin.php:486
 msgid "A JSON object, or a regular form post (application/x-www-form-urlencoded or multipart/form-data). Files are not accepted."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:476
+#: includes/class-submitdock-admin.php:487
 msgid "Authentication"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:476
+#: includes/class-submitdock-admin.php:487
 msgid "None for browsers: it is a public endpoint, restricted to your websites under Settings. Server-side code can send an API key in the X-SubmitDock-Key header."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:479
+#: includes/class-submitdock-admin.php:490
 msgid "JavaScript (any framework)"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:507
+#: includes/class-submitdock-admin.php:518
 msgid "Values can be text, numbers, booleans, arrays (for checkbox groups), or nested objects."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:509
+#: includes/class-submitdock-admin.php:520
 msgid "Plain HTML, no JavaScript"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:510
+#: includes/class-submitdock-admin.php:521
 msgid "Add a __redirect field and the visitor returns to that page with ?form_status=success or ?form_status=error. Redirects only go to your allowed websites or this site."
 msgstr ""
 
 #. translators: 1: service name, 2: field name.
-#: includes/class-submitdock-admin.php:548
+#: includes/class-submitdock-admin.php:559
 #, php-format
 msgid "Choose a service under Settings, then add its widget inside your form. The widget adds a %2$s field, which SubmitDock checks with %1$s before saving. From JavaScript, send the token in that field or in __captcha."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:554
+#: includes/class-submitdock-admin.php:565
 msgid "Inside your form:"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:556
+#: includes/class-submitdock-admin.php:567
 msgid "No spam check service is selected yet, so this example uses Cloudflare Turnstile."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:559
+#: includes/class-submitdock-admin.php:570
 msgid "From a server"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:560
+#: includes/class-submitdock-admin.php:571
 msgid "Server-side code sends no Origin header, so create an API key under Settings and send it in the X-SubmitDock-Key header. Keyed requests skip the allowed websites check, the spam check and the rate limit. Pass your visitor's IP address and browser in __context so they are saved and used by Akismet."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:575
+#: includes/class-submitdock-admin.php:586
 msgid "Next.js server action"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:605
+#: includes/class-submitdock-admin.php:616
 msgid "Responses"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:607
+#: includes/class-submitdock-admin.php:618
 msgid "Saved and emailed."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:608
+#: includes/class-submitdock-admin.php:619
 msgid "Saved, but the email could not be sent. Treat it as success."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:609
+#: includes/class-submitdock-admin.php:620
 msgid "Invalid data, the spam trap was filled in, or the spam check (CAPTCHA) failed."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:610
+#: includes/class-submitdock-admin.php:621
 msgid "The website is not in the allowed list."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:611
+#: includes/class-submitdock-admin.php:622
 msgid "Rate limit reached."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:613
+#: includes/class-submitdock-admin.php:624
 msgid "Errors return JSON with a message field."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:615
+#: includes/class-submitdock-admin.php:626
 msgid "Limits"
 msgstr ""
 
 #. translators: 1: maximum fields, 2: maximum bytes.
-#: includes/class-submitdock-admin.php:618
+#: includes/class-submitdock-admin.php:629
 #, php-format
 msgid "Up to %1$d fields and %2$s bytes of data per submission."
 msgstr ""
 
 #. translators: %d: maximum characters.
-#: includes/class-submitdock-admin.php:620
+#: includes/class-submitdock-admin.php:631
 #, php-format
 msgid "Text values up to %d characters. Field names up to 100 characters."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:621
+#: includes/class-submitdock-admin.php:632
 msgid "Field names starting with __ are reserved and are not saved."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:624
+#: includes/class-submitdock-admin.php:635
 msgid "For developers"
 msgstr ""
 
-#: includes/class-submitdock-admin.php:626
+#: includes/class-submitdock-admin.php:637
 msgid "filter the fields before saving, or return a WP_Error to reject the submission."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:627
+#: includes/class-submitdock-admin.php:638
 msgid "action after saving, for webhooks, CRMs, or Slack."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:628
+#: includes/class-submitdock-admin.php:639
 msgid "filter the notification email."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:629
+#: includes/class-submitdock-admin.php:640
 msgid "filter the visitor IP address, for sites behind a proxy or CDN."
 msgstr ""
 
-#: includes/class-submitdock-admin.php:630
+#: includes/class-submitdock-admin.php:641
 msgid "action when a submission is saved to the Spam folder."
 msgstr ""
 
@@ -588,79 +606,91 @@ msgstr ""
 msgid "Spam check failed"
 msgstr ""
 
+#. translators: %s: the email address that is not valid.
+#: includes/class-submitdock-settings.php:92
+#, php-format
+msgid "\"%s\" is not a valid email address. Separate several addresses with commas."
+msgstr ""
+
+#: includes/class-submitdock-settings.php:101
+msgid "Enter at least one email address to send notifications to."
+msgstr ""
+
+#. translators: %d: maximum number of addresses.
+#: includes/class-submitdock-settings.php:105
+#, php-format
+msgid "Enter up to %d email addresses."
+msgstr ""
+
 #. translators: %s: site name.
-#: includes/class-submitdock-settings.php:74
+#: includes/class-submitdock-settings.php:130
 #, php-format
 msgid "New form submission on %s"
 msgstr ""
 
-#: includes/class-submitdock-settings.php:82
+#: includes/class-submitdock-settings.php:138
 msgid "Thank you. Your message has been received."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:83
+#: includes/class-submitdock-settings.php:139
 msgid "Your message was saved, but the email notification could not be sent."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:84
+#: includes/class-submitdock-settings.php:140
 msgid "Your submission contains invalid or unsupported data."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:85
+#: includes/class-submitdock-settings.php:141
 msgid "This website is not allowed to submit this form."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:86
+#: includes/class-submitdock-settings.php:142
 msgid "Too many submissions from this connection. Please wait and try again."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:87
+#: includes/class-submitdock-settings.php:143
 msgid "Your message could not be saved. Please try again later."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:88
+#: includes/class-submitdock-settings.php:144
 msgid "Your submission could not be accepted."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:89
+#: includes/class-submitdock-settings.php:145
 msgid "Please complete the spam check and try again."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:163
-msgid "Enter a valid notification email address."
-msgstr ""
-
-#: includes/class-submitdock-settings.php:174
+#: includes/class-submitdock-settings.php:236
 msgid "The email subject cannot be empty."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:181
-#: includes/class-submitdock-settings.php:188
+#: includes/class-submitdock-settings.php:243
+#: includes/class-submitdock-settings.php:250
 msgid "Field names can contain only letters, numbers, underscores, periods, and hyphens."
 msgstr ""
 
 #. translators: %s: the rejected origin.
-#: includes/class-submitdock-settings.php:201
+#: includes/class-submitdock-settings.php:263
 #, php-format
 msgid "\"%s\" is not a valid origin and was ignored. Enter only a scheme and host, for example https://example.com."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:221
+#: includes/class-submitdock-settings.php:283
 msgid "Enter the secret key for your spam check service. Until you do, submissions are not checked."
 msgstr ""
 
 #. translators: 1: minimum days, 2: maximum days.
-#: includes/class-submitdock-settings.php:227
+#: includes/class-submitdock-settings.php:289
 #, php-format
 msgid "Days to keep spam must be between %1$d and %2$d."
 msgstr ""
 
-#: includes/class-submitdock-settings.php:238
+#: includes/class-submitdock-settings.php:300
 msgid "Response messages must be between 1 and 500 characters."
 msgstr ""
 
 #. translators: 1: minimum, 2: maximum.
-#: includes/class-submitdock-settings.php:298
+#: includes/class-submitdock-settings.php:361
 #, php-format
 msgid "Rate limit values must be between %1$d and %2$d."
 msgstr ""

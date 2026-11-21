@@ -5,7 +5,7 @@ Tags: headless, form backend, rest api, form submissions, nextjs
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,11 @@ The plugin is ready for translation, and translations are made by volunteers on 
 
 == Changelog ==
 
+= 1.2.3 (2026-11-21) =
+* Send to accepts several email addresses, separated by commas (up to 10). Every address gets each notification.
+* Every text field on the Settings screen shows an example placeholder.
+* Fix: the first save on a new site no longer shows false errors about the subject, allowed websites and messages.
+
 = 1.2.2 (2026-11-19) =
 * The Settings screen and the plugin's row on the Plugins screen mention the SubmitDock Pro add-on. Both are hidden when Pro is active.
 * Readme: SubmitDock Pro section, new questions on webhooks and Pro, updated answer on file uploads.
@@ -196,6 +201,9 @@ The plugin is ready for translation, and translations are made by volunteers on 
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.2.3 =
+Send notifications to several email addresses, and a fix for false errors on the first settings save.
 
 = 1.2.2 =
 Settings text and SubmitDock Pro information. Nothing to change.
