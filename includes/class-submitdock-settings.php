@@ -62,6 +62,13 @@ final class SubmitDock_Settings {
 	}
 
 	/**
+	 * Result of the last sanitize() call in this request.
+	 *
+	 * @var array|null
+	 */
+	private static $last_sanitized = null;
+
+	/**
 	 * Most notification recipients accepted in Send to.
 	 */
 	const MAX_RECIPIENTS = 10;
@@ -199,6 +206,12 @@ final class SubmitDock_Settings {
 	 * @return array
 	 */
 	public static function sanitize( $input ) {
+		// The first time the option is saved, WordPress runs this callback twice: once in update_option()
+		// and again in add_option(), on the already sanitized value. Return that value unchanged the
+		// second time instead of validating it as form input.
+		if ( null !== self::$last_sanitized && $input === self::$last_sanitized ) {
+			return $input;
+		}
 		$current = self::get();
 		if ( ! is_array( $input ) ) {
 			return $current;
@@ -291,6 +304,7 @@ final class SubmitDock_Settings {
 		// Texts left at their default are not saved, so visitors see them in their own language.
 		$output = self::without_defaults( $output );
 
+		self::$last_sanitized = $output;
 		return $output;
 	}
 
